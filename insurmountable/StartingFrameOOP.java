@@ -46,6 +46,6 @@ class StartingFrameOOP extends JFrame implements GameConstants{
 
     //the main method  - starts this application
     public static void main(String[] args) { 
-        new StartingFrameOOP();
+   //     new StartingFrameOOP();
     }
 }

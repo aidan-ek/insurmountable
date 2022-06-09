@@ -6,11 +6,13 @@ import java.awt.Color;
 import javax.swing.JPanel;
 
 class GamePanelOOP extends JPanel implements GameConstants{
+	
     
     //declare game objects
     Player player;
     
     GamePanelOOP() {
+    	
         //game object initialization
         player = new Player(GAME_W/2, GAME_H/2, "src/images/sprite");
         
@@ -29,11 +31,15 @@ class GamePanelOOP extends JPanel implements GameConstants{
         Thread t = new Thread(new Runnable() { public void run() {gameLoop(); }}); //start the gameLoop 
         t.start();
     }
+    public static void main(String[] args) { 
+    	new GameFrameOOP();
+    }
     
     //the main gameloop - this is where the game state is updated
     public  void gameLoop() { 
         while(true){
             player.timeUpdate();
+            System.out.println(player.currentTime);
             //update the gameplay
             player.move();
             System.out.println(player.getY());
