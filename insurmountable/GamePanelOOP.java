@@ -38,11 +38,12 @@ class GamePanelOOP extends JPanel implements GameConstants{
     //the main gameloop - this is where the game state is updated
     public  void gameLoop() { 
         while(true){
-            player.timeUpdate();
-            System.out.println(player.currentTime);
+            //player.timeUpdate();
+            //System.out.println(player.currentTime);
+            
             //update the gameplay
             player.move();
-            System.out.println(player.getY());
+            //System.out.println(player.getX());
             //repaint the window
             this.repaint();            
 
