@@ -21,6 +21,7 @@ class GameFrameOOP extends JFrame implements GameConstants{
         //create the game panel (where all graphics are drawn)
         gamePanel = new GamePanelOOP();
         
+        
         //add the panel to the frame
         this.add(new GamePanelOOP());
         this.setFocusable(false);         //focus on the game panel

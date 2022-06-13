@@ -4,19 +4,22 @@ package insurmountable;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
 
-class GameMouseListener implements MouseListener {
+class GameMouseListener implements MouseListener, GameConstants {
     //reference to items effected by keyboard actions
     private Player player;
+    private StartScreen startScreen;
     
-    GameMouseListener(Player p) {
-        player = p;
+    GameMouseListener() {
+
     } 
     
     public void mouseClicked(MouseEvent e) {
-        System.out.println("Mouse Clicked!!");
-        System.out.println("X:"+e.getX() + " y:"+e.getY());
-    }
-    
+        //If the mouse is clicked within the box of the start, set menu to true
+        if(((e.getX()>371) && (e.getX()<(620)))&&((e.getY()>341) && (e.getY()<(390)))) {
+        	startScreen.menu = true;
+        }
+        
+    }    
     public void mousePressed(MouseEvent e) {
     }
     
@@ -28,5 +31,6 @@ class GameMouseListener implements MouseListener {
     
     public void mouseExited(MouseEvent e) {
     }
-}
+    
+ }
 

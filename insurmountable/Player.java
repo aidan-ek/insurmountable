@@ -32,6 +32,7 @@ class Player implements GameConstants {
     public Player(int newX, int newY, String fileName) {
 		x = newX;
 		y = newY;
+
 		loadSprite(fileName);
 		width = this.frames[0][1].getWidth();
 		height = this.frames[0][1].getHeight();
