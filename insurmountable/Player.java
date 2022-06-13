@@ -14,7 +14,7 @@ class Player implements GameConstants {
 	private int xSpeed, ySpeed;
 	boolean arrowUp, arrowDown, arrowLeft, arrowRight;
 	int spriteX = GAME_W/2;
-    int spriteY = GAME_H/2;   
+    int spriteY = GAME_H/2;
     
     
     // Time Tracking. Should probably move this to its own file and make it public so other ones can use

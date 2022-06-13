@@ -17,8 +17,8 @@ class GamePanelOOP extends JPanel implements GameConstants{
     	
     	
         //game object initialization
-        player = new Player(GAME_W/2, GAME_H/2, "src/images/sprite");
-        startScreen = new StartScreen("src/images/startscreen.png");
+        player = new Player(GAME_W/2, GAME_H/2, "src/images/Player/sprite");
+        startScreen = new StartScreen("src/images/GUI/startscreen.png");
         //attach key and mouse listeners to the game panel
         PlayerKeyListener keyListener = new PlayerKeyListener(player);
         this.addKeyListener(keyListener);
@@ -30,7 +30,6 @@ class GamePanelOOP extends JPanel implements GameConstants{
         this.setFocusable(true);      //make this window the active window
         this.requestFocusInWindow(); 
                       
-        // PUT START MENU HERE
              
         //start the game loop in a separate thread (allows simple frame rate control)
         //alternately delete this code and just call repaint() at the end of paintComponent()
@@ -43,7 +42,7 @@ class GamePanelOOP extends JPanel implements GameConstants{
     
     //Start main method to create game frame
     public static void main(String[] args) { 
-    	new  GameFrameOOP();
+    	new GameFrameOOP();
     } 
     
     //Create menu method
