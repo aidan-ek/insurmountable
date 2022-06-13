@@ -21,6 +21,7 @@ class Player implements GameConstants {
     static long startTime, currentTime, elapsedTime;
     Rectangle playerBoundingBox;    
     BufferedImage[][] frames = new BufferedImage[rows][columns];
+    BufferedImage start;
     public Player(int x, int y, String fileName) {
 		this.x = x;
 		this.y = y;
