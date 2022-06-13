@@ -1,4 +1,3 @@
-//example for a game object
 package insurmountable;
 
 import java.awt.image.BufferedImage;
@@ -16,42 +15,56 @@ class Player implements GameConstants {
 	boolean arrowUp, arrowDown, arrowLeft, arrowRight;
 	int spriteX = GAME_W/2;
     int spriteY = GAME_H/2;   
-    int rows = 4;
-    int columns = 3;
+    
+    
+    // Time Tracking. Should probably move this to its own file and make it public so other ones can use
     static long startTime, currentTime, elapsedTime;
-    Rectangle playerBoundingBox;    
-    BufferedImage[][] frames = new BufferedImage[rows][columns];
-    BufferedImage start;
-    public Player(int x, int y, String fileName) {
-		this.x = x;
-		this.y = y;
+    
+    // player hitbox
+    Rectangle playerHitbox;    
+    
+    // player animations array
+    private int currentAnimation = 4;
+    private int currentFrame = 3;
+    private BufferedImage[][] frames = new BufferedImage[currentAnimation][currentFrame];
+    
+    // parameter constructor
+    public Player(int newX, int newY, String fileName) {
+		x = newX;
+		y = newY;
+
 		loadSprite(fileName);
-		this.width = this.frames[0][1].getWidth();
-		this.height = this.frames[0][1].getHeight();
-		this.xSpeed = 0;
-		this.ySpeed = 0;
+		width = this.frames[0][1].getWidth();
+		height = this.frames[0][1].getHeight();
+		xSpeed = 0;
+		ySpeed = 0;
 	}
 //----------------------------------------        
 	public void loadSprite(String fileName) {
 		
 		try {
-			for (int row=0; row<rows; row++){
-	            for (int col=0; col<columns; col++){
+			// loads all sprite animation files
+			for (int row=0; row<currentAnimation; row++){
+	            for (int col=0; col<currentFrame; col++){
 	                frames[row][col] = ImageIO.read(new File(fileName+row+col+".png"));
 	            }
 	        }
-			rows = 0;
-			columns = 1;
+			// sets the sprite to its first frame of the first animation
+			currentAnimation = 0;
+			currentFrame = 1;
 		} catch (Exception e) {
-			System.out.println("error loading sprite");
+			System.out.println("error loading Player sprite");
 		}
 	}
 
-
+	// draws hitbox and sprite
 	public void draw(Graphics g) {
 		
-		g.drawImage(this.frames[this.rows][this.columns], this.x, this.y, null);
+		// draws player
+		g.drawImage(this.frames[currentAnimation][currentFrame], this.x, this.y, null);
 		g.setColor(Color.red);
+		
+		// player hitbox
 		g.drawRect(this.x, this.y, this.frames[0][1].getWidth(), this.frames[0][1].getHeight());
 	
 
@@ -90,32 +103,41 @@ class Player implements GameConstants {
 		this.ySpeed = speed;
 	}
 
-//----------------------------------------    
+// Player movement   
 	public void move() {
+		// adds up the inputs to see the total offset of the player in a frame
 		int moveDistX = 0;
 		int moveDistY = 0;
 		if (arrowLeft) {
-			this.rows = 1;
-			this.columns = (this.columns + 1)%frames[rows].length;
+			// cycles through movement frames using mod
+			currentAnimation = 1;
+			currentFrame = (currentFrame + 1)%frames[currentAnimation].length;
 			moveDistX -= RUN_SPEED;
-		} else if (arrowRight) {
-			this.rows = 2;
-			this.columns = (this.columns + 1)%frames[rows].length;
+		}
+		if (arrowRight) {
+			currentAnimation = 2;
+			currentFrame = (currentFrame + 1)%frames[currentAnimation].length;
 			moveDistX += RUN_SPEED;
 		}
 		if (arrowUp) {
-			this.rows = 3;
-			this.columns = (this.columns + 1)%frames[rows].length;
+			currentAnimation = 3;
+			currentFrame = (currentFrame + 1)%frames[currentAnimation].length;
 			moveDistY -= RUN_SPEED;
-		} else if (arrowDown) {
-			this.rows = 0;
-			this.columns = (this.columns + 1)%frames[rows].length;
+		}
+		if (arrowDown) {
+			currentAnimation = 0;
+			currentFrame = (currentFrame + 1)%frames[currentAnimation].length;
 			moveDistY += RUN_SPEED;
 		}
 		
+		// moves the player based on the keys held
 		this.x += moveDistX;
 		this.y += moveDistY;
-		playerBoundingBox = new Rectangle(this.x, this.y, this.frames[0][1].getWidth(), this.frames[0][1].getHeight());
+		
+		System.out.println(moveDistX);
+		
+		// remakes the player hitbox
+		playerHitbox = new Rectangle(this.x, this.y, this.frames[0][1].getWidth(), this.frames[0][1].getHeight());
 	}
 //----------------------------------------        
 	public void timeUpdate() {
