@@ -202,7 +202,7 @@ class Player implements GameConstants {
 			}
 			if(keyX && attackCooldown == 0) {
 				attacking = true;				
-				attackTimer = Time.currentTime;				
+				attackTimer = Time.getTime();				
 			}
 		}
 		
