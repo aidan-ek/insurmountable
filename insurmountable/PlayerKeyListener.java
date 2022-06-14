@@ -28,7 +28,11 @@ class PlayerKeyListener implements KeyListener,GameConstants {
         	player.arrowDown = true;
         } else if (keyCode == KeyEvent.VK_Z){
         	player.keyZ = true;
+        } else if (keyCode == KeyEvent.VK_X) {
+        	player.keyX = true;
         }
+        
+        
     }   
     
     public void keyReleased(KeyEvent e) {
@@ -43,7 +47,11 @@ class PlayerKeyListener implements KeyListener,GameConstants {
          	player.arrowDown = false;
          } else if (keyCode == KeyEvent.VK_Z){
          	player.keyZ = false;
-         }     
+         } else if (keyCode == KeyEvent.VK_X) {
+         	player.keyX = false;
+         }
+
+         
 
     }
 }
