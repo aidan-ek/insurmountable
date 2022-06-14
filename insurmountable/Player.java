@@ -12,7 +12,10 @@ class Player implements GameConstants {
 	private int x, y;
 	private int width, height;
 	private int xSpeed, ySpeed;
-	boolean arrowUp, arrowDown, arrowLeft, arrowRight;
+	boolean dodgeRolling = false;
+	private long rollTimer, rollCooldown;
+	private int rollX, rollY;
+	boolean arrowUp, arrowDown, arrowLeft, arrowRight, keyZ;
 	int spriteX = GAME_W/2;
     int spriteY = GAME_H/2;
     
@@ -24,7 +27,7 @@ class Player implements GameConstants {
     Rectangle playerHitbox;    
     
     // player animations array
-    private int currentAnimation = 4;
+    private int currentAnimation = 5;
     private int currentFrame = 3;
     private BufferedImage[][] frames = new BufferedImage[currentAnimation][currentFrame];
     
@@ -108,26 +111,65 @@ class Player implements GameConstants {
 		// adds up the inputs to see the total offset of the player in a frame
 		int moveDistX = 0;
 		int moveDistY = 0;
-		if (arrowLeft) {
-			// cycles through movement frames using mod
-			currentAnimation = 1;
-			currentFrame = (currentFrame + 1)%frames[currentAnimation].length;
-			moveDistX -= RUN_SPEED;
+		
+		// checks if roll is still on cooldown
+		if (Time.since(rollCooldown) >= DODGE_CD) {
+			rollCooldown = 0;
 		}
-		if (arrowRight) {
-			currentAnimation = 2;
+		
+		// player cannot move while rolling
+		if (dodgeRolling) {
+			moveDistX = rollX;
+			moveDistY = rollY;
+			currentAnimation = 4;
 			currentFrame = (currentFrame + 1)%frames[currentAnimation].length;
-			moveDistX += RUN_SPEED;
+			if((Time.since(rollTimer)) >= DODGE_TIME) {
+				dodgeRolling = false;
+				rollCooldown = Time.getTime();
+			}
+		} else {
+			
+			if (arrowLeft) {
+				// cycles through movement frames using mod
+				currentAnimation = 1;
+				currentFrame = (currentFrame + 1)%frames[currentAnimation].length;
+				moveDistX -= RUN_SPEED;
+			}
+			if (arrowRight) {
+				currentAnimation = 2;
+				currentFrame = (currentFrame + 1)%frames[currentAnimation].length;
+				moveDistX += RUN_SPEED;
+			}
+			if (arrowUp) {
+				currentAnimation = 3;
+				currentFrame = (currentFrame + 1)%frames[currentAnimation].length;
+				moveDistY -= RUN_SPEED;
+			}
+			if (arrowDown) {
+				currentAnimation = 0;
+				currentFrame = (currentFrame + 1)%frames[currentAnimation].length;
+				moveDistY += RUN_SPEED;
+			}
+			
+			// dodge roll intialize
+			if (keyZ && rollCooldown == 0) {
+				dodgeRolling = true;
+				currentAnimation = 4;
+				currentFrame = 0;
+				rollTimer = Time.currentTime;
+				if (moveDistX != 0 && moveDistY != 0) {
+					moveDistX /= 1.41;
+					moveDistY /= 1.41;
+				}
+				rollX = Integer.signum(moveDistX) * DODGE_SPEED;
+				rollY = Integer.signum(moveDistY) * DODGE_SPEED;
+			}
 		}
-		if (arrowUp) {
-			currentAnimation = 3;
-			currentFrame = (currentFrame + 1)%frames[currentAnimation].length;
-			moveDistY -= RUN_SPEED;
-		}
-		if (arrowDown) {
-			currentAnimation = 0;
-			currentFrame = (currentFrame + 1)%frames[currentAnimation].length;
-			moveDistY += RUN_SPEED;
+		
+		// normalizes the vectors to not have increased speed diagonally
+		if (moveDistX != 0 && moveDistY != 0) {
+			moveDistX /= 1.3;
+			moveDistY /= 1.3;
 		}
 		
 		// moves the player based on the keys held
@@ -139,10 +181,5 @@ class Player implements GameConstants {
 		// remakes the player hitbox
 		playerHitbox = new Rectangle(this.x, this.y, this.frames[0][1].getWidth(), this.frames[0][1].getHeight());
 	}
-//----------------------------------------        
-	public void timeUpdate() {
-		currentTime = System.currentTimeMillis();
-	}
-	public void update() {
-	}
+
 }
