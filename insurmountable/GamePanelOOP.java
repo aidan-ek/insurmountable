@@ -11,6 +11,7 @@ class GamePanelOOP extends JPanel implements GameConstants{
 	
     //declare game objects
     private Player player;
+    private Boss boss;
     private StartScreen startScreen;
         
     GamePanelOOP() {
@@ -19,6 +20,8 @@ class GamePanelOOP extends JPanel implements GameConstants{
         //game object initialization
         player = new Player(GAME_W/2, GAME_H/2, "src/images/Player/sprite");
         startScreen = new StartScreen("src/images/GUI/startscreen.png");
+        boss = new Boss(GAME_W/2, 0, "src/images/Boss/Boss");
+        
         //attach key and mouse listeners to the game panel
         PlayerKeyListener keyListener = new PlayerKeyListener(player);
         this.addKeyListener(keyListener);
@@ -64,6 +67,7 @@ class GamePanelOOP extends JPanel implements GameConstants{
             //System.out.println(player.currentTime);
             //update the gameplay
             player.move();
+            boss.update();
             //repaint the window
             this.repaint();            
 
@@ -90,6 +94,7 @@ class GamePanelOOP extends JPanel implements GameConstants{
         }else if(startScreen.menu) {       
         g.setColor(Color.white);
         g.fillRect(0, 0, GAME_W, GAME_H);
+        boss.draw(g);
         player.draw(g);    
     }
     }   

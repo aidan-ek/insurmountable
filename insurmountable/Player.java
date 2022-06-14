@@ -11,17 +11,10 @@ import java.awt.Rectangle;
 class Player implements GameConstants {
 	private int x, y;
 	private int width, height;
-	private int xSpeed, ySpeed;
 	boolean dodgeRolling = false;
 	private long rollTimer, rollCooldown;
 	private int rollX, rollY;
 	boolean arrowUp, arrowDown, arrowLeft, arrowRight, keyZ;
-	int spriteX = GAME_W/2;
-    int spriteY = GAME_H/2;
-    
-    
-    // Time Tracking. Should probably move this to its own file and make it public so other ones can use
-    static long startTime, currentTime, elapsedTime;
     
     // player hitbox
     Rectangle playerHitbox;    
@@ -39,8 +32,6 @@ class Player implements GameConstants {
 		loadSprite(fileName);
 		width = this.frames[0][1].getWidth();
 		height = this.frames[0][1].getHeight();
-		xSpeed = 0;
-		ySpeed = 0;
 	}
 //----------------------------------------        
 	public void loadSprite(String fileName) {
@@ -98,14 +89,6 @@ class Player implements GameConstants {
 		this.y = y;
 	}
 
-	public void setXspeed(int speed) {
-		this.xSpeed = speed;
-	}
-
-	public void setYspeed(int speed) {
-		this.ySpeed = speed;
-	}
-
 // Player movement   
 	public void move() {
 		// adds up the inputs to see the total offset of the player in a frame
@@ -156,7 +139,7 @@ class Player implements GameConstants {
 				dodgeRolling = true;
 				currentAnimation = 4;
 				currentFrame = 0;
-				rollTimer = Time.currentTime;
+				rollTimer = Time.getTime();
 				if (moveDistX != 0 && moveDistY != 0) {
 					moveDistX /= 1.41;
 					moveDistY /= 1.41;
@@ -176,7 +159,6 @@ class Player implements GameConstants {
 		this.x += moveDistX;
 		this.y += moveDistY;
 		
-		System.out.println(moveDistX);
 		
 		// remakes the player hitbox
 		playerHitbox = new Rectangle(this.x, this.y, this.frames[0][1].getWidth(), this.frames[0][1].getHeight());
