@@ -9,8 +9,8 @@ interface GameConstants {
     static final int GROUND = 565;
     static final int RUN_SPEED = 8;
     static final int DODGE_SPEED = 15;
-    static final long DODGE_CD = 3000;
     static final long ATTACK_CD = 1000;
+    static final long DODGE_CD = 2000;
     static final long DODGE_TIME = 400;
     static final long ATTACK_TIME = 200;
 

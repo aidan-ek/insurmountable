@@ -1,7 +1,7 @@
 package insurmountable;
 
 public class Time {
-	static long currentTime;
+	private static long currentTime;
 	
 	public static void update() {
 		currentTime = System.currentTimeMillis();
