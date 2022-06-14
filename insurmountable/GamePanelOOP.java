@@ -14,7 +14,7 @@ class GamePanelOOP extends JPanel implements GameConstants{
     private StartScreen startScreen;
         
     GamePanelOOP() {
-    	
+
     	
         //game object initialization
         player = new Player(GAME_W/2, GAME_H/2, "src/images/Player/sprite");

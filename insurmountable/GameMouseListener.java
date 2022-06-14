@@ -8,7 +8,7 @@ class GameMouseListener implements MouseListener, GameConstants {
     //reference to items effected by keyboard actions
     private Player player;
     private StartScreen startScreen;
-    
+   
     GameMouseListener() {
 
     } 

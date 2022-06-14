@@ -25,6 +25,7 @@ class Player implements GameConstants {
     
     // player hitbox
     Rectangle playerHitbox;    
+    Rectangle swordHitbox;
     
     // player animations array
     private int currentAnimation = 5;
@@ -175,6 +176,20 @@ class Player implements GameConstants {
 		// moves the player based on the keys held
 		this.x += moveDistX;
 		this.y += moveDistY;
+		if(!((this.x + moveDistX)+width+13 < GAME_W)) {
+			this.x = GAME_W-width-13;
+		}
+		if(!(this.x + moveDistX >= 0)){
+			this.x = 0;
+		}
+		if(!((this.y + moveDistY)+height+40 < GAME_H)) {
+			this.y = GAME_H-height-40;
+		}
+		if(!(this.y + moveDistX >= 0)){
+			this.y = 0;
+		}
+		
+		
 		
 		System.out.println(moveDistX);
 		
