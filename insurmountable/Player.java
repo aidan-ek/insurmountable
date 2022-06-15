@@ -80,18 +80,18 @@ class Player implements GameConstants {
 		
 		// player hitbox
 		g.drawRect(this.x, this.y, width, height);
-		if((lastM == 0) && attacking) {
+		if(lastM == 0 && attacking) {
+			g.drawRect(this.x, this.y+60, 50,50);
+		}
+		if((lastM == 1) && attacking) {
 			g.drawRect(this.x-60, this.y, 50,50);
 			
 		}
-		if(lastM == 1 && attacking) {
+		if(lastM == 2 && attacking) {
 			g.drawRect(this.x+60, this.y, 50,50);
 		}
-		if(lastM == 2 && attacking) {
-			g.drawRect(this.x, this.y-60, 50,50);
-		}
 		if(lastM == 3 && attacking) {
-			g.drawRect(this.x, this.y+60, 50,50);
+			g.drawRect(this.x, this.y-60, 50,50);
 		}
 
 	}
@@ -139,21 +139,22 @@ class Player implements GameConstants {
 		// player cannot move while rolling/attacking
 		if(attacking) {
 			if(lastM == 0) {
-				attackHitbox = new Rectangle(this.x-30, this.y, 10,10); 
-				currentAnimation = 6;
-			}
-			if(lastM == 1) {
-				attackHitbox = new Rectangle(this.x+30, this.y, 10,10);
-				currentAnimation = 5;
-			}
-			if(lastM == 2) {
-				attackHitbox = new Rectangle(this.x, this.y-30, 10,10);
-				currentAnimation = 7;
-			}
-			if(lastM == 3) {
 				attackHitbox = new Rectangle(this.x, this.y+30, 10,10); 
 				currentAnimation = 8;
 			}
+			if(lastM == 1) {
+				attackHitbox = new Rectangle(this.x-30, this.y, 10,10); 
+				currentAnimation = 6;
+			}
+			if(lastM == 2) {
+				attackHitbox = new Rectangle(this.x+30, this.y, 10,10);
+				currentAnimation = 5;
+			}
+			if(lastM == 3) {
+				attackHitbox = new Rectangle(this.x, this.y-30, 10,10);
+				currentAnimation = 7;
+			}
+			
 			currentFrame = (currentFrame + 1)%frames[currentAnimation].size();
 			if((Time.since(attackTimer)) >= DODGE_TIME) {
 				attacking = false;
@@ -170,35 +171,41 @@ class Player implements GameConstants {
 				rollCooldown = Time.getTime();
 			}
 		} else {
-			
+			if (arrowDown) {
+				currentAnimation = 0;
+				currentFrame = (currentFrame + 1)%frames[currentAnimation].size();
+				moveDistY += RUN_SPEED;
+				lastM = 0;
+			}
 			if (arrowLeft) {
 				// cycles through movement frames using mod
 				currentAnimation = 1;
 				currentFrame = (currentFrame + 1)%frames[currentAnimation].size();
 				moveDistX -= RUN_SPEED;
-				lastM = 0;
+				lastM = 1;
 			}
 			if (arrowRight) {
 				currentAnimation = 2;
 				currentFrame = (currentFrame + 1)%frames[currentAnimation].size();
 				moveDistX += RUN_SPEED;
-				lastM = 1;
+				lastM = 2;
 			}
 			if (arrowUp) {
 				currentAnimation = 3;
 				currentFrame = (currentFrame + 1)%frames[currentAnimation].size();
 				moveDistY -= RUN_SPEED;
-				lastM = 2;
-			}
-			if (arrowDown) {
-				currentAnimation = 0;
-				currentFrame = (currentFrame + 1)%frames[currentAnimation].size();
-				moveDistY += RUN_SPEED;
 				lastM = 3;
 			}
 			
-			// dodge roll intialize
-			if (keyZ && rollCooldown == 0) {
+			
+			// resets animation if no keys are pressed
+			if(!arrowDown && !arrowUp && !arrowRight && !arrowLeft) {
+				currentAnimation = lastM;
+				currentFrame = 0;
+			}
+			
+			// dodge roll and attack
+			if (keyX && rollCooldown == 0) {
 				dodgeRolling = true;
 				currentAnimation = 4;
 				currentFrame = 0;
@@ -209,11 +216,11 @@ class Player implements GameConstants {
 				}
 				rollX = Integer.signum(moveDistX) * DODGE_SPEED;
 				rollY = Integer.signum(moveDistY) * DODGE_SPEED;
-			}
-			if(keyX && attackCooldown == 0) {
+			} else if(keyZ && attackCooldown == 0) {
 				attacking = true;				
 				attackTimer = Time.getTime();				
 			}
+
 		}
 		
 		// normalizes the vectors to not have increased speed diagonally
@@ -239,7 +246,7 @@ class Player implements GameConstants {
 		}
 		
 		// remakes the player hitbox
-		hitbox = new Rectangle(this.x, this.y, this.frames[0].get(1).getWidth(), this.frames[0].get(1).getHeight());
+		hitbox = new Rectangle(this.x, this.y, width, height);
 	}
 	
 	
