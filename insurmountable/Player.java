@@ -138,23 +138,6 @@ class Player implements GameConstants {
 		
 		// player cannot move while rolling/attacking
 		if(attacking) {
-			if(lastM == 0) {
-				attackHitbox = new Rectangle(this.x, this.y+30, 10,10); 
-				currentAnimation = 8;
-			}
-			if(lastM == 1) {
-				attackHitbox = new Rectangle(this.x-30, this.y, 10,10); 
-				currentAnimation = 6;
-			}
-			if(lastM == 2) {
-				attackHitbox = new Rectangle(this.x+30, this.y, 10,10);
-				currentAnimation = 5;
-			}
-			if(lastM == 3) {
-				attackHitbox = new Rectangle(this.x, this.y-30, 10,10);
-				currentAnimation = 7;
-			}
-			
 			currentFrame = (currentFrame + 1)%frames[currentAnimation].size();
 			if((Time.since(attackTimer)) >= DODGE_TIME) {
 				attacking = false;
@@ -218,7 +201,23 @@ class Player implements GameConstants {
 				rollY = Integer.signum(moveDistY) * DODGE_SPEED;
 			} else if(keyZ && attackCooldown == 0) {
 				attacking = true;				
-				attackTimer = Time.getTime();				
+				attackTimer = Time.getTime();		
+				if(lastM == 0) {
+					attackHitbox = new Rectangle(this.x, this.y+30, 10,10); 
+					currentAnimation = 8;
+				}
+				if(lastM == 1) {
+					attackHitbox = new Rectangle(this.x-30, this.y, 10,10); 
+					currentAnimation = 6;
+				}
+				if(lastM == 2) {
+					attackHitbox = new Rectangle(this.x+30, this.y, 10,10);
+					currentAnimation = 5;
+				}
+				if(lastM == 3) {
+					attackHitbox = new Rectangle(this.x, this.y-30, 10,10);
+					currentAnimation = 7;
+				}
 			}
 
 		}
