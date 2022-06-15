@@ -41,13 +41,11 @@ class GamePanelOOP extends JPanel implements GameConstants{
         Thread t = new Thread(new Runnable() { public void run() {menu(); }}); 
         t.start(); 
         
-    }
-    
+    }    
     //Start main method to create game frame
     public static void main(String[] args) { 
     	new GameFrameOOP();
-    } 
-    
+    }    
     //Create menu method
     public void menu() {
     	//Start while loop for menu
@@ -55,7 +53,6 @@ class GamePanelOOP extends JPanel implements GameConstants{
     		//As long as they dont click start, they will be in the menu
     		this.repaint();
     	}
-    	
     	//Create thread for gameloop
     	Thread t = new Thread(new Runnable() { public void run() {gameLoop(); }}); //start the gameLoop 
         t.start();
@@ -66,8 +63,10 @@ class GamePanelOOP extends JPanel implements GameConstants{
             Time.update();
             //System.out.println(player.currentTime);
             //update the gameplay
+           
             player.move();
             boss.update();
+            updateCollides(player,boss);
             //repaint the window
             this.repaint();            
 
@@ -77,7 +76,23 @@ class GamePanelOOP extends JPanel implements GameConstants{
         }    
     }
     
-    
+  
+    public static void updateCollides(Player p, Boss b){
+        //Check if player attack hit      
+        if(p.attacking) {
+         if(p.attackHitbox.intersects(b.hitbox)) {
+          System.out.println("player attack intersects boss hitbox");
+         }
+        }
+       
+//        if(b.attacking) {
+//         if(p.attackHitbox.intersects(b.hitbox)) {
+//          
+//         }
+//        }
+  }
+
+ 
     // paintComponnent runs every time the window gets refreshed
     public void paintComponent(Graphics g) { 
     	

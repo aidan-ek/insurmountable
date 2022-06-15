@@ -34,6 +34,7 @@ public class Boss implements GameConstants {
 		loadSprites(fileName);
 		x = newX;
 		y = newY;
+		hitbox = new Rectangle(this.x, this.y, this.frames[0].get(1).getWidth(), this.frames[0].get(1).getHeight());
 	}
     
     
