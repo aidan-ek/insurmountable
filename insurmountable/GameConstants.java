@@ -12,7 +12,7 @@ interface GameConstants {
     static final long ATTACK_CD = 1000;
     static final long DODGE_CD = 2000;
     static final long DODGE_TIME = 400;
-    static final long ATTACK_TIME = 200;
+    static final long ATTACK_TIME = 150;
 
     static final int GRAVITY = 2;
     static final int FRAME_TIME = 30;

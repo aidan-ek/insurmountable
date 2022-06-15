@@ -18,6 +18,7 @@ class Player implements GameConstants {
 	private long rollTimer, rollCooldown;
 	private long attackTimer, attackCooldown;
 	private int rollX, rollY;
+	double multiplier = 1;
 	private int health = 5;
 
 	boolean arrowUp, arrowDown, arrowLeft, arrowRight, keyZ, keyX;
@@ -139,7 +140,7 @@ class Player implements GameConstants {
 		// player cannot move while rolling/attacking
 		if(attacking) {
 			currentFrame = (currentFrame + 1)%frames[currentAnimation].size();
-			if((Time.since(attackTimer)) >= DODGE_TIME) {
+			if((Time.since(attackTimer)) >= ATTACK_TIME) {
 				attacking = false;
 				attackCooldown = Time.getTime();
 			}
@@ -248,7 +249,14 @@ class Player implements GameConstants {
 		hitbox = new Rectangle(this.x, this.y, width, height);
 	}
 	
-	
+	public void multiplerAdd() {
+		if(multiplier < 20) {
+			multiplier += 1;
+		}		
+	}
+	public void multiplierReset() {
+		multiplier = 1;
+	}
 	// getters and setters
 	public int getHeath() {
     	return health;
