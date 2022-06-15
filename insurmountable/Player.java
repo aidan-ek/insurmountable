@@ -23,8 +23,8 @@ class Player implements GameConstants {
 	boolean arrowUp, arrowDown, arrowLeft, arrowRight, keyZ, keyX;
     
     // player hitbox
-    Rectangle playerHitbox; 
-    Rectangle swordHitbox;    
+    Rectangle hitbox; 
+    Rectangle attackHitbox;    
     
     
     // player animations array
@@ -139,19 +139,19 @@ class Player implements GameConstants {
 		// player cannot move while rolling/attacking
 		if(attacking) {
 			if(lastM == 0) {
-				swordHitbox = new Rectangle(this.x-30, this.y, 10,10); 
+				attackHitbox = new Rectangle(this.x-30, this.y, 10,10); 
 				currentAnimation = 6;
 			}
 			if(lastM == 1) {
-				swordHitbox = new Rectangle(this.x+30, this.y, 10,10);
+				attackHitbox = new Rectangle(this.x+30, this.y, 10,10);
 				currentAnimation = 5;
 			}
 			if(lastM == 2) {
-				swordHitbox = new Rectangle(this.x, this.y-30, 10,10);
+				attackHitbox = new Rectangle(this.x, this.y-30, 10,10);
 				currentAnimation = 7;
 			}
 			if(lastM == 3) {
-				swordHitbox = new Rectangle(this.x, this.y+30, 10,10); 
+				attackHitbox = new Rectangle(this.x, this.y+30, 10,10); 
 				currentAnimation = 8;
 			}
 			currentFrame = (currentFrame + 1)%frames[currentAnimation].size();
@@ -239,7 +239,7 @@ class Player implements GameConstants {
 		}
 		
 		// remakes the player hitbox
-		playerHitbox = new Rectangle(this.x, this.y, this.frames[0].get(1).getWidth(), this.frames[0].get(1).getHeight());
+		hitbox = new Rectangle(this.x, this.y, this.frames[0].get(1).getWidth(), this.frames[0].get(1).getHeight());
 	}
 	
 	

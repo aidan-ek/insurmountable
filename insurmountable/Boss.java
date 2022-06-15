@@ -17,7 +17,7 @@ public class Boss implements GameConstants {
 	private long animationStartTime = 0;
 	
 	// boss hitbox
-    Rectangle bossHitbox;    
+    Rectangle hitbox;    
     
     // boss animations arrays
     private int currentAnimation = 0;
