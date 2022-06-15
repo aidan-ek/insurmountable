@@ -4,15 +4,12 @@ import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 
-class Player implements GameConstants {
-	final int UP = 0;
-	final int LEFT = 1; 
-	final int RIGHT = 2; 
-	final int DOWN = 3; 
+class Player implements GameConstants { 
 	private int lastM;
 	private int x, y;
 	private int width, height;
@@ -21,6 +18,7 @@ class Player implements GameConstants {
 	private long rollTimer, rollCooldown;
 	private long attackTimer, attackCooldown;
 	private int rollX, rollY;
+	private int health = 5;
 
 	boolean arrowUp, arrowDown, arrowLeft, arrowRight, keyZ, keyX;
     
@@ -30,57 +28,69 @@ class Player implements GameConstants {
     
     
     // player animations array
-    private int currentAnimation = 9;
-    private int currentFrame = 3;
-    private BufferedImage[][] frames = new BufferedImage[currentAnimation][currentFrame];
+    private int currentAnimation = 0;
+    private int currentFrame = 0;
+    private ArrayList<BufferedImage>[] frames;
+    
+    // adjust when adding new animation sets
+    private final int TOTAL_ANIMATIONS = 9;
     
     // parameter constructor
     public Player(int newX, int newY, String fileName) {
 		x = newX;
 		y = newY;
 
-		loadSprite(fileName);
-		width = this.frames[0][1].getWidth();
-		height = this.frames[0][1].getHeight();
+		loadSprites(fileName);
+		width = this.frames[0].get(1).getWidth();
+		height = this.frames[0].get(1).getHeight();
 	}
 //----------------------------------------        
-	public void loadSprite(String fileName) {
-		
-		try {
-			// loads all sprite animation files
-			for (int row=0; row<currentAnimation; row++){
-	            for (int col=0; col<currentFrame; col++){
-	                frames[row][col] = ImageIO.read(new File(fileName+row+col+".png"));
-	            }
-	        }
-			// sets the sprite to its first frame of the first animation
-			currentAnimation = 0;
-			currentFrame = 1;
-		} catch (Exception e) {
-			System.out.println("error loading Player sprite");
-		}
-	}
+ // loads the player sprites in the folder until failure. (catches missing file as it will always throw this)
+    private void loadSprites(String fileName){
+        this.frames = new ArrayList[TOTAL_ANIMATIONS];
+        for(int j=0;j<frames.length; j++) {
+        	System.out.println(j);
+        	this.frames[j] = new ArrayList<BufferedImage>();
+        	try {
+        		int i = 0;
+            	while(true) {
+            		i++;
+            		this.frames[j].add(ImageIO.read(new File(fileName+j+i+".png")));
+            		System.out.println("File Success: " + fileName+j+i+".png");
+            	}
+            }
+            catch(Exception e) {
+            	if (("" + e).equals("javax.imageio.IIOException: Can't read input file!")) {
+            		System.out.println("All player images loaded successfully.");
+            	} else {
+            		System.out.println("Error Loading Images: " + e);
+            	}
+            	 
+            }
+        }
+        
+    }
 
 	// draws hitbox and sprite
 	public void draw(Graphics g) {
 		
 		// draws player
-		g.drawImage(this.frames[currentAnimation][currentFrame], this.x, this.y, null);
+		g.drawImage(this.frames[currentAnimation].get(currentFrame), this.x, this.y, null);
 		g.setColor(Color.red);
 		
 		// player hitbox
-		g.drawRect(this.x, this.y, this.frames[0][1].getWidth(), this.frames[0][1].getHeight());
-		if((lastM == LEFT) && attacking) {
+		g.drawRect(this.x, this.y, width, height);
+		if((lastM == 0) && attacking) {
 			g.drawRect(this.x-60, this.y, 50,50);
 			
 		}
-		if(lastM == RIGHT && attacking) {
+		if(lastM == 1 && attacking) {
 			g.drawRect(this.x+60, this.y, 50,50);
 		}
-		if(lastM == UP && attacking) {
+		if(lastM == 2 && attacking) {
 			g.drawRect(this.x, this.y-60, 50,50);
 		}
-		if(lastM == DOWN && attacking) {
+		if(lastM == 3 && attacking) {
 			g.drawRect(this.x, this.y+60, 50,50);
 		}
 
@@ -128,23 +138,23 @@ class Player implements GameConstants {
 		
 		// player cannot move while rolling/attacking
 		if(attacking) {
-			if(lastM == RIGHT) {
-				swordHitbox = new Rectangle(this.x+30, this.y, 10,10);
-				currentAnimation = 5;
-			}
-			if(lastM == LEFT) {
+			if(lastM == 0) {
 				swordHitbox = new Rectangle(this.x-30, this.y, 10,10); 
 				currentAnimation = 6;
 			}
-			if(lastM == UP) {
+			if(lastM == 1) {
+				swordHitbox = new Rectangle(this.x+30, this.y, 10,10);
+				currentAnimation = 5;
+			}
+			if(lastM == 2) {
 				swordHitbox = new Rectangle(this.x, this.y-30, 10,10);
 				currentAnimation = 7;
 			}
-			if(lastM == DOWN) {
+			if(lastM == 3) {
 				swordHitbox = new Rectangle(this.x, this.y+30, 10,10); 
 				currentAnimation = 8;
 			}
-			currentFrame = (currentFrame + 1)%frames[currentAnimation].length;
+			currentFrame = (currentFrame + 1)%frames[currentAnimation].size();
 			if((Time.since(attackTimer)) >= DODGE_TIME) {
 				attacking = false;
 				attackCooldown = Time.getTime();
@@ -154,7 +164,7 @@ class Player implements GameConstants {
 			moveDistX = rollX;
 			moveDistY = rollY;
 			currentAnimation = 4;
-			currentFrame = (currentFrame + 1)%frames[currentAnimation].length;
+			currentFrame = (currentFrame + 1)%frames[currentAnimation].size();
 			if((Time.since(rollTimer)) >= DODGE_TIME) {
 				dodgeRolling = false;
 				rollCooldown = Time.getTime();
@@ -164,27 +174,27 @@ class Player implements GameConstants {
 			if (arrowLeft) {
 				// cycles through movement frames using mod
 				currentAnimation = 1;
-				currentFrame = (currentFrame + 1)%frames[currentAnimation].length;
+				currentFrame = (currentFrame + 1)%frames[currentAnimation].size();
 				moveDistX -= RUN_SPEED;
-				lastM = LEFT;
+				lastM = 0;
 			}
 			if (arrowRight) {
 				currentAnimation = 2;
-				currentFrame = (currentFrame + 1)%frames[currentAnimation].length;
+				currentFrame = (currentFrame + 1)%frames[currentAnimation].size();
 				moveDistX += RUN_SPEED;
-				lastM = RIGHT;
+				lastM = 1;
 			}
 			if (arrowUp) {
 				currentAnimation = 3;
-				currentFrame = (currentFrame + 1)%frames[currentAnimation].length;
+				currentFrame = (currentFrame + 1)%frames[currentAnimation].size();
 				moveDistY -= RUN_SPEED;
-				lastM = UP;
+				lastM = 2;
 			}
 			if (arrowDown) {
 				currentAnimation = 0;
-				currentFrame = (currentFrame + 1)%frames[currentAnimation].length;
+				currentFrame = (currentFrame + 1)%frames[currentAnimation].size();
 				moveDistY += RUN_SPEED;
-				lastM = DOWN;
+				lastM = 3;
 			}
 			
 			// dodge roll intialize
@@ -228,11 +238,17 @@ class Player implements GameConstants {
 			this.y = 0;
 		}
 		
-		
-		
-		
 		// remakes the player hitbox
-		playerHitbox = new Rectangle(this.x, this.y, this.frames[0][1].getWidth(), this.frames[0][1].getHeight());
+		playerHitbox = new Rectangle(this.x, this.y, this.frames[0].get(1).getWidth(), this.frames[0].get(1).getHeight());
 	}
+	
+	
+	// getters and setters
+	public int getHeath() {
+    	return health;
+    }
+    public void setHealth(int newHealth) {
+    	health = newHealth;
+    }
 
 }

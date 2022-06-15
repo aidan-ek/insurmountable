@@ -23,6 +23,9 @@ public class Boss implements GameConstants {
     private int currentAnimation = 0;
     private int currentFrame = 0;
     private ArrayList<BufferedImage>[] frames;
+    
+    // adjust when adding new animation sets
+    private final int TOTAL_ANIMATIONS = 1;
 	
 	// parameter constructor
     public Boss(int newX, int newY, String fileName) {
@@ -36,7 +39,7 @@ public class Boss implements GameConstants {
     
     // loads the boss sprites in the folder until failure. (catches missing file as it will always throw this)
     private void loadSprites(String fileName){
-        this.frames = new ArrayList[1];
+        this.frames = new ArrayList[TOTAL_ANIMATIONS];
         for(int j=0;j<frames.length; j++) {
         	System.out.println(j);
         	this.frames[j] = new ArrayList<BufferedImage>();
