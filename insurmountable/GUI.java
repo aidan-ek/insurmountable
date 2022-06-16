@@ -22,6 +22,9 @@ public class GUI implements GameConstants {
 	// the size of the boss health bar
 	static final int BOSSBAR_H = 20;
 	static final int BOSSBAR_W = 700;
+	static final int DODGEBAR_H = 10;
+	static final int DODGEBAR_W = 50;
+	static final int DODGEBAR_EDGEOFFSET = 500;
 	// how far the health bar will be from edge of screen
 	static final int BOSSBAR_EDGEOFFSET = 50;
 
@@ -65,6 +68,12 @@ public class GUI implements GameConstants {
 		g.setColor(Color.RED);
 		if (boss.getHealth() > 0) {
 			g.fillRect(GAME_W - barWidth - BOSSBAR_EDGEOFFSET, GAME_H - BOSSBAR_H - BOSSBAR_EDGEOFFSET, barWidth, BOSSBAR_H);
+		}
+		int dodgeBar = (int)(DODGEBAR_W * player.getRollCooldown() / DODGE_CD);
+		
+		g.setColor(Color.GREEN);
+		if (player.getRollCooldown() < DODGE_CD) {
+			g.fillRect(player.getX()+dodgeBar/2, player.getY()+player.getHeight(), (DODGEBAR_W) - dodgeBar, DODGEBAR_H);
 		}
 		
 		// draws combo multiplier
