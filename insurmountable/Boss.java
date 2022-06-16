@@ -11,7 +11,7 @@ import java.awt.Rectangle;
 
 public class Boss implements GameConstants {
 	private int width, height, x, y;
-	private int health = 100;
+	private int health = BOSS_MAXHP;
 	
 	// timer for antimations
 	private long animationStartTime = 0;
@@ -32,7 +32,7 @@ public class Boss implements GameConstants {
     	
     	// CURRENTLY MISSING BOSS SPRITES FOR PLACEHOLDER
 		loadSprites(fileName);
-		x = newX;
+		x = newX - (this.frames[0].get(1).getWidth() / 2);
 		y = newY;
 		hitbox = new Rectangle(this.x, this.y, this.frames[0].get(1).getWidth(), this.frames[0].get(1).getHeight());
 	}
@@ -72,7 +72,7 @@ public class Boss implements GameConstants {
  		
  		// boss hitbox
  		g.setColor(Color.red);
- 		g.drawRect(this.x, this.y, this.frames[currentAnimation].get(currentFrame).getWidth(), this.frames[currentAnimation].get(currentFrame).getHeight());
+ 		g.drawRect(this.x, this.y, this.frames[0].get(1).getWidth(), this.frames[0].get(1).getHeight());
  	
 
  	}
@@ -88,12 +88,28 @@ public class Boss implements GameConstants {
  		}
  		
  	}
+ 	
+ 	public void hurt(int damage) {
+ 		health -= damage;
+ 	}
     
     // getters and setters
-    public int getHeath() {
+    public int getHealth() {
     	return health;
     }
     public void setHealth(int newHealth) {
     	health = newHealth;
+    }
+    public int getX() {
+    	return x;
+    }
+    public void setX(int newX) {
+    	x = newX;
+    }
+    public int getY() {
+    	return y;
+    }
+    public void setY(int newY) {
+    	y = newY;
     }
 }

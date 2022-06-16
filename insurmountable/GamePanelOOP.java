@@ -11,6 +11,7 @@ class GamePanelOOP extends JPanel implements GameConstants {
 	// declare game objects
 	private Player player;
 	private Boss boss;
+	private GUI gui;
 	private StartScreen startScreen;
 	boolean bossHit = false;
 
@@ -19,7 +20,8 @@ class GamePanelOOP extends JPanel implements GameConstants {
 		// game object initialization
 		player = new Player(GAME_W / 2, GAME_H / 2, "src/images/Player/sprite");
 		startScreen = new StartScreen("src/images/GUI/startscreen.png");
-		boss = new Boss(GAME_W / 2, 0, "src/images/Boss/Boss");
+		boss = new Boss(GAME_W / 2, 50, "src/images/Boss/Boss");
+		gui = new GUI(player, boss);
 
 		// attach key and mouse listeners to the game panel
 		PlayerKeyListener keyListener = new PlayerKeyListener(player);
@@ -42,6 +44,8 @@ class GamePanelOOP extends JPanel implements GameConstants {
 			}
 		});
 		t.start();
+		
+		
 
 	}
 
@@ -71,11 +75,14 @@ class GamePanelOOP extends JPanel implements GameConstants {
 		while (true) {
 			Time.update();
 			// System.out.println(player.currentTime);
+			
+			
 			// update the gameplay
-
 			player.move();
 			boss.update();
 			updateCollides(player, boss);
+			gui.update(player, boss);
+			
 			// repaint the window
 			this.repaint();
 
@@ -95,8 +102,10 @@ class GamePanelOOP extends JPanel implements GameConstants {
 				if (!bossHit) {
 					bossHit = true;
 					System.out.println("player attack intersects boss hitbox");
-					p.multiplerAdd();
-					System.out.println(p.multiplier);
+					p.comboAdd();
+					System.out.println(p.getCombo());
+					
+					boss.hurt(p.getCombo());
 				}
 			}
 		}
@@ -130,6 +139,7 @@ class GamePanelOOP extends JPanel implements GameConstants {
 			g.fillRect(0, 0, GAME_W, GAME_H);
 			boss.draw(g);
 			player.draw(g);
+			gui.draw(g);
 		}
 	}
 }

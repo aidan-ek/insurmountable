@@ -18,8 +18,8 @@ class Player implements GameConstants {
 	private long rollTimer, rollCooldown;
 	private long attackTimer, attackCooldown;
 	private int rollX, rollY;
-	double multiplier = 1;
-	private int health = 5;
+	private int combo = 0;
+	private int health = PLAYER_MAXHP;
 
 	boolean arrowUp, arrowDown, arrowLeft, arrowRight, keyZ, keyX;
     
@@ -249,16 +249,24 @@ class Player implements GameConstants {
 		hitbox = new Rectangle(this.x, this.y, width, height);
 	}
 	
-	public void multiplerAdd() {
-		if(multiplier < 20) {
-			multiplier += 1;
+	
+	public void comboAdd() {
+		if(combo < MAX_COMBO) {
+			combo += 1;
 		}		
 	}
-	public void multiplierReset() {
-		multiplier = 1;
+	public void comboReset() {
+		combo = 1;
 	}
+	
 	// getters and setters
-	public int getHeath() {
+	public long getRollCooldown() {
+    	return Time.since(rollCooldown);
+    }
+	public int getCombo() {
+		return combo;
+	}
+	public int getHealth() {
     	return health;
     }
     public void setHealth(int newHealth) {
