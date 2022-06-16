@@ -6,8 +6,6 @@ import javax.swing.JFrame;
 //import java.awt.Toolkit;
 
 class GameFrameOOP extends JFrame implements GameConstants{ 
-
-    static GamePanelOOP gamePanel;
     
     GameFrameOOP() { 
     	
@@ -18,14 +16,11 @@ class GameFrameOOP extends JFrame implements GameConstants{
         // this.setSize(Toolkit.getDefaultToolkit().getScreenSize()); //set the frame to full screen         
         // this.setUndecorated(true);     //set to true to remove title bar
         
-        //create the game panel (where all graphics are drawn)
-        gamePanel = new GamePanelOOP();
-        
-        
         //add the panel to the frame
         this.add(new GamePanelOOP());
         this.setFocusable(false);         //focus on the game panel
-        this.setVisible(true);    
+        this.setVisible(true);   
+        
     } 
 }
 

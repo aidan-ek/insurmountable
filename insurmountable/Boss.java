@@ -1,6 +1,7 @@
 package insurmountable;
 
 import java.awt.image.BufferedImage;
+import java.util.concurrent.ThreadLocalRandom;
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
@@ -26,6 +27,11 @@ public class Boss implements GameConstants {
     
     // adjust when adding new animation sets
     private final int TOTAL_ANIMATIONS = 1;
+    
+    // boss attack constants
+    private long IDLE_DELAY = 100;
+    private long CLEAVE_WINDUP = 1000;
+    
 	
 	// parameter constructor
     public Boss(int newX, int newY, String fileName) {
@@ -79,13 +85,49 @@ public class Boss implements GameConstants {
  	
  	public void update() {
  		
- 		// uses timers to slow down boss animations (this just a test of idle animation)
+ 		switch (currentAnimation) {
+ 			case 0: idle(); break;
+ 			case 1: cleaveAttack(); break;
+ 			case 2: comboAttack(); break;
+ 			case 3: rayAttack(); break;
+ 			default: idle();
+ 		}
+ 		
+ 		
+ 	}
+ 	
+ 	public void randomAttack() {
+ 		animationStartTime = Time.getTime();
+ 		currentAnimation = ThreadLocalRandom.current().nextInt(1, TOTAL_ANIMATIONS + 1);
+ 		currentFrame = 0;
+ 	}
+ 	
+ 	public void idle() {
  		if (animationStartTime == 0) {
  			animationStartTime = Time.getTime();
  			currentFrame = (currentFrame + 1)%frames[currentAnimation].size();
- 		} else if (Time.since(animationStartTime) >= 100) {
+ 		} else if (Time.since(animationStartTime) >= IDLE_DELAY) {
  			animationStartTime = 0;
  		}
+ 	}
+ 	
+ 	public void cleaveAttack() {
+ 		if (animationStartTime == 0) {
+ 			animationStartTime = Time.getTime();
+ 			currentFrame = (currentFrame + 1)%frames[currentAnimation].size();
+ 		} else {
+ 			if (currentFrame == 0 && Time.since(animationStartTime) >= CLEAVE_WINDUP) {
+ 				animationStartTime = 0;
+ 				currentFrame = 1;
+ 			}
+ 		}
+ 	}
+ 	
+ 	public void comboAttack() {
+ 		
+ 	}
+ 	
+ 	public void rayAttack() {
  		
  	}
  	
