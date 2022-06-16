@@ -12,14 +12,18 @@ class GamePanelOOP extends JPanel implements GameConstants {
 	private Player player;
 	private Boss boss;
 	private GUI gui;
+	private EndScreen endScreen;
 	private StartScreen startScreen;
 	boolean bossHit = false;
+	private Thread gameThread;
+
 
 	GamePanelOOP() {
 
 		// game object initialization
 		player = new Player(GAME_W / 2, GAME_H / 2, "src/images/Player/sprite");
 		startScreen = new StartScreen("src/images/GUI/startscreen.png");
+		endScreen = new EndScreen("src/images/GUI/");
 		boss = new Boss(GAME_W / 2, 50, "src/images/Boss/Boss");
 		gui = new GUI(player, boss);
 
@@ -41,14 +45,19 @@ class GamePanelOOP extends JPanel implements GameConstants {
 		Thread t = new Thread(new Runnable() {
 			public void run() {
 				menu();
+				// Create thread for gameloop
+				gameThread = new Thread(new Runnable() {
+					public void run() {
+						gameLoop();
+					}
+				}); // start the gameLoop
+				gameThread.start();
 			}
 		});
 		t.start();
 		
-		
-
 	}
-
+	
 	// Start main method to create game frame
 	public static void main(String[] args) {
 		new GameFrameOOP();
@@ -61,13 +70,7 @@ class GamePanelOOP extends JPanel implements GameConstants {
 			// As long as they dont click start, they will be in the menu
 			this.repaint();
 		}
-		// Create thread for gameloop
-		Thread t = new Thread(new Runnable() {
-			public void run() {
-				gameLoop();
-			}
-		}); // start the gameLoop
-		t.start();
+		
 	}
 
 	// the main gameloop - this is where the game state is updated
@@ -75,13 +78,13 @@ class GamePanelOOP extends JPanel implements GameConstants {
 		while (true) {
 			Time.update();
 			// System.out.println(player.currentTime);
-			
-			
+
 			// update the gameplay
 			player.move();
 			boss.update();
 			updateCollides(player, boss);
 			gui.update(player, boss);
+			endScreen.gameEnd = checkDeath(player, boss);
 			
 			// repaint the window
 			this.repaint();
@@ -94,6 +97,17 @@ class GamePanelOOP extends JPanel implements GameConstants {
 			}
 		}
 	}
+	
+	public boolean checkDeath(Player p, Boss b) {
+		if(p.getHealth() <= 0) {
+			return true;
+		}else if(b.getHealth() <= 0) {
+			return true;
+		}else {
+			return false;
+		}
+		
+	}
 
 	public void updateCollides(Player p, Boss b) {
 		// Check if player attack hit
@@ -104,15 +118,12 @@ class GamePanelOOP extends JPanel implements GameConstants {
 					System.out.println("player attack intersects boss hitbox");
 					p.comboAdd();
 					System.out.println(p.getCombo());
-					
-					boss.hurt(p.getCombo());
+					boss.hurt(p.getCombo());	
 				}
 			}
-		}
-		else {
+		} else {
 			bossHit = false;
 		}
-
 
 //        if(b.attacking) {
 //         if(p.attackHitbox.intersects(b.hitbox)) {
@@ -134,12 +145,25 @@ class GamePanelOOP extends JPanel implements GameConstants {
 			g.drawImage(startScreen.start, -40, -40, null);
 
 			// When they enter game display game
-		} else if (startScreen.menu) {
+		} else if (startScreen.menu && !endScreen.gameEnd) {
 			g.setColor(Color.white);
 			g.fillRect(0, 0, GAME_W, GAME_H);
 			boss.draw(g);
 			player.draw(g);
 			gui.draw(g);
+		} else if (endScreen.gameEnd) {
+			if (boss.getHealth() <= 0) {
+				g.setColor(Color.white);
+				g.fillRect(0, 0, GAME_W, GAME_H);
+				g.drawImage(endScreen.playerWon, 0, 0, null);
+				gameThread.stop();
+			}
+			else {
+				g.setColor(Color.white);
+				g.fillRect(0, 0, GAME_W, GAME_H);
+				g.drawImage(endScreen.playerLost, 0, 0, null);
+				gameThread.stop();
+			}
 		}
 	}
 }
