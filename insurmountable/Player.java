@@ -204,19 +204,19 @@ class Player implements GameConstants {
 				attacking = true;				
 				attackTimer = Time.getTime();		
 				if(lastM == 0) {
-					attackHitbox = new Rectangle(this.x, this.y+30, 10,10); 
+					attackHitbox = new Rectangle(this.x, this.y+60, 50,50); 
 					currentAnimation = 8;
 				}
 				if(lastM == 1) {
-					attackHitbox = new Rectangle(this.x-30, this.y, 10,10); 
+					attackHitbox = new Rectangle(this.x-60, this.y, 50,50); 
 					currentAnimation = 6;
 				}
 				if(lastM == 2) {
-					attackHitbox = new Rectangle(this.x+30, this.y, 10,10);
+					attackHitbox = new Rectangle(this.x+60, this.y, 50,50);
 					currentAnimation = 5;
 				}
 				if(lastM == 3) {
-					attackHitbox = new Rectangle(this.x, this.y-30, 10,10);
+					attackHitbox = new Rectangle(this.x, this.y-60, 50,50);
 					currentAnimation = 7;
 				}
 			}
@@ -232,6 +232,8 @@ class Player implements GameConstants {
 		// moves the player based on the keys held
 		this.x += moveDistX;
 		this.y += moveDistY;
+		
+		//Borders 
 		if(!((this.x + moveDistX)+width+13 < GAME_W)) {
 			this.x = GAME_W-width-13;
 		}
@@ -258,6 +260,18 @@ class Player implements GameConstants {
 	public void comboReset() {
 		combo = 1;
 	}
+	public void bounceBack() {
+		health--;
+		if(lastM == 1) {
+			this.x += 100;
+		}
+		if(lastM == 2) {
+			this.x -= 100;
+		}
+		if(lastM == 3) {
+			this.y += 100;
+		}
+	}
 	
 	// getters and setters
 	public long getRollCooldown() {
@@ -272,5 +286,5 @@ class Player implements GameConstants {
     public void setHealth(int newHealth) {
     	health = newHealth;
     }
-
+   
 }

@@ -16,7 +16,6 @@ interface GameConstants {
     static final int PLAYER_MAXHP = 5;
     static final int BOSS_MAXHP = 300;
     static final int MAX_COMBO = 10;
-
     static final int GRAVITY = 2;
     static final int FRAME_TIME = 30;
 }

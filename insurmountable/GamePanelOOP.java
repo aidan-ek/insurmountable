@@ -22,7 +22,7 @@ class GamePanelOOP extends JPanel implements GameConstants {
 
 		// game object initialization
 		player = new Player(GAME_W / 2, GAME_H / 2, "src/images/Player/sprite");
-		startScreen = new StartScreen("src/images/GUI/startscreen.png");
+		startScreen = new StartScreen("src/images/GUI/");
 		endScreen = new EndScreen("src/images/GUI/");
 		boss = new Boss(GAME_W / 2, 50, "src/images/Boss/Boss");
 		gui = new GUI(player, boss);
@@ -110,6 +110,10 @@ class GamePanelOOP extends JPanel implements GameConstants {
 	}
 
 	public void updateCollides(Player p, Boss b) {
+		if(p.hitbox.intersects(b.hitbox)) {
+			p.bounceBack();
+			p.comboReset();
+		}
 		// Check if player attack hit
 		if (p.attacking) {
 			if (p.attackHitbox.intersects(b.hitbox)) {
@@ -139,18 +143,21 @@ class GamePanelOOP extends JPanel implements GameConstants {
 		setDoubleBuffered(true);
 
 		// While they dont click start display the menu
-		if (!startScreen.menu) {
+		if (!startScreen.menu && !startScreen.info) {
 			g.setColor(Color.white);
 			g.fillRect(0, 0, GAME_W, GAME_H);
 			g.drawImage(startScreen.start, -40, -40, null);
 
 			// When they enter game display game
-		} else if (startScreen.menu && !endScreen.gameEnd) {
+		}else if(startScreen.info) {
+			g.drawImage(startScreen.moves, 0, 0, null);
+		} 
+		else if (startScreen.menu && !endScreen.gameEnd) {
 			g.setColor(Color.white);
 			g.fillRect(0, 0, GAME_W, GAME_H);
 			boss.draw(g);
-			player.draw(g);
 			gui.draw(g);
+			player.draw(g);
 		} else if (endScreen.gameEnd) {
 			if (boss.getHealth() <= 0) {
 				g.setColor(Color.white);

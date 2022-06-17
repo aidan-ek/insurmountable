@@ -10,7 +10,9 @@ import javax.imageio.ImageIO;
 public class StartScreen {
 	//Declare methods
 	static boolean menu = false;
+	static boolean info = false;
 	BufferedImage start;
+	BufferedImage moves;
 	
 	//Create constructor
 	public StartScreen(String fileName) {
@@ -19,8 +21,9 @@ public class StartScreen {
 	
 	//Start load sprite method
 	public void loadSprite(String fileName) {
-		try {
-			start = ImageIO.read(new File(fileName));
+		try { 
+			start = ImageIO.read(new File(fileName + "startscreen.png"));
+			moves = ImageIO.read(new File(fileName + "infoscreen.png"));
 		} catch (IOException e) {
 			System.out.println("Couldn't Load Menu");
 		}
