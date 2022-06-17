@@ -45,8 +45,7 @@ class Player implements GameConstants {
 		y = newY;
 
 		loadSprites(fileName);
-		width = this.frames[0].get(1).getWidth();
-		height = this.frames[0].get(1).getHeight();
+		
 	}
 //----------------------------------------        
  // loads the player sprites in the folder until failure. (catches missing file as it will always throw this)
@@ -71,8 +70,7 @@ class Player implements GameConstants {
             	}
             	 
             }
-        }
-        
+        } 
     }
 
 	// draws hitbox and sprite
@@ -85,17 +83,17 @@ class Player implements GameConstants {
 		// player hitbox
 		g.drawRect(this.x, this.y, width, height);
 		if(lastM == 0 && attacking) {
-			g.drawRect(this.x, this.y+60, 50,50);
+			g.drawRect(this.x, this.y+60, width, 50);
 		}
 		if((lastM == 1) && attacking) {
-			g.drawRect(this.x-60, this.y, 50,50);
+			g.drawRect(this.x-60, this.y, 50, height);
 			
 		}
 		if(lastM == 2 && attacking) {
-			g.drawRect(this.x+60, this.y, 50,50);
+			g.drawRect(this.x+60, this.y, 50, height);
 		}
 		if(lastM == 3 && attacking) {
-			g.drawRect(this.x, this.y-60, 50,50);
+			g.drawRect(this.x, this.y-60, width,50);
 		}
 
 	}
@@ -208,7 +206,6 @@ class Player implements GameConstants {
 				lastM = 3;
 			}
 			
-			
 			// resets animation if no keys are pressed
 			if(!arrowDown && !arrowUp && !arrowRight && !arrowLeft) {
 				currentAnimation = lastM;
@@ -275,10 +272,18 @@ class Player implements GameConstants {
 		}
 		
 		// remakes the player hitbox
+		if(lastM == 1 || lastM == 2) {
+		width = this.frames[1].get(0).getWidth();
+		height = this.frames[1].get(0).getHeight();
+		}else if(lastM == 0) {
+		width = this.frames[0].get(0).getWidth();
+		height = this.frames[0].get(0).getHeight();
+		}else if(lastM == 3) {
+		width = this.frames[3].get(0).getWidth();
+		height = this.frames[3].get(0).getHeight();
+		}
 		hitbox = new Rectangle(this.x, this.y, width, height);
-		
 	}
-	
 	
 	public void comboAdd() {
 		if(combo < MAX_COMBO) {
