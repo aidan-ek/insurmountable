@@ -81,7 +81,7 @@ class GamePanelOOP extends JPanel implements GameConstants {
 
 			// update the gameplay
 			player.move();
-			boss.update();
+			boss.update(player);
 			updateCollides(player, boss);
 			gui.update(player, boss);
 			endScreen.gameEnd = checkDeath(player, boss);
