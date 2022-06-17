@@ -110,10 +110,20 @@ class GamePanelOOP extends JPanel implements GameConstants {
 	}
 
 	public void updateCollides(Player p, Boss b) {
+		
 		if(p.hitbox.intersects(b.hitbox)) {
-			p.bounceBack();
-			p.comboReset();
+			p.touchedBoss();
 		}
+		
+		// put all attack collision checkers here
+		if (!p.dodgeRolling && !p.invulnerable) {
+			
+			if(p.hitbox.intersects(b.attackHitbox) && b.getAnimation() == 1) {
+				p.hurt(2, 4, 300);
+			}
+			
+		}
+		
 		// Check if player attack hit
 		if (p.attacking) {
 			if (p.attackHitbox.intersects(b.hitbox)) {
@@ -123,6 +133,7 @@ class GamePanelOOP extends JPanel implements GameConstants {
 					p.comboAdd();
 					System.out.println(p.getCombo());
 					boss.hurt(p.getCombo());	
+					boss.randomAttack();;
 				}
 			}
 		} else {
@@ -134,6 +145,13 @@ class GamePanelOOP extends JPanel implements GameConstants {
 //          
 //         }
 //        }
+		
+		// prevents repeated hits every frame. always keep at end of updateCollides
+		if(p.hitbox.intersects(b.hitbox) || p.hitbox.intersects(b.attackHitbox)) {
+			p.invulnerable = true;
+		} else {
+			p.invulnerable = false;
+		}
 	}
 
 	// paintComponnent runs every time the window gets refreshed

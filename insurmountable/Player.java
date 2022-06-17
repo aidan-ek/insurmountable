@@ -14,12 +14,15 @@ class Player implements GameConstants {
 	private int x, y;
 	private int width, height;
 	boolean dodgeRolling = false;
+	boolean invulnerable = false;
 	boolean attacking = false;
 	private long rollTimer, rollCooldown;
 	private long attackTimer, attackCooldown;
 	private int rollX, rollY;
 	private int combo = 0;
 	private int health = PLAYER_MAXHP;
+	private long knockTimer, knockStart;
+	private int knockbackDir = 0; //0 is neutral. 1, 2, 3, 4 are UP, RIGHT, LEFT, DOWN
 
 	boolean arrowUp, arrowDown, arrowLeft, arrowRight, keyZ, keyX;
     
@@ -34,7 +37,7 @@ class Player implements GameConstants {
     private ArrayList<BufferedImage>[] frames;
     
     // adjust when adding new animation sets
-    private final int TOTAL_ANIMATIONS = 9;
+    private final int TOTAL_ANIMATIONS = 10;
     
     // parameter constructor
     public Player(int newX, int newY, String fileName) {
@@ -55,9 +58,9 @@ class Player implements GameConstants {
         	try {
         		int i = 0;
             	while(true) {
-            		i++;
             		this.frames[j].add(ImageIO.read(new File(fileName+j+i+".png")));
             		System.out.println("File Success: " + fileName+j+i+".png");
+            		i++;
             	}
             }
             catch(Exception e) {
@@ -137,8 +140,32 @@ class Player implements GameConstants {
 			attackCooldown = 0;
 		}
 		
+		if (currentAnimation == 9) {
+			if (knockbackDir > 0) {
+				currentFrame = (currentFrame + 1)%frames[currentAnimation].size();
+				System.out.println(currentFrame);
+				switch (knockbackDir) {
+					
+					case 4: moveDistY += KNOCKBACK_SPEED; break;
+					case 3: moveDistX -= KNOCKBACK_SPEED; break;
+					case 2: moveDistX += KNOCKBACK_SPEED; break;
+					case 1: moveDistY -= KNOCKBACK_SPEED; break;
+					
+					default: moveDistY = 0; moveDistX = 0;
+				}
+				if((Time.since(knockStart)) >= knockTimer) {
+					knockbackDir = 0;
+					knockTimer = 0;
+					knockStart = 0;
+					currentAnimation = 0;
+				}
+			} else {
+				currentAnimation = 0;
+			}
+			
+		}	
 		// player cannot move while rolling/attacking
-		if(attacking) {
+		else if(attacking) {
 			currentFrame = (currentFrame + 1)%frames[currentAnimation].size();
 			if((Time.since(attackTimer)) >= ATTACK_TIME) {
 				attacking = false;
@@ -240,15 +267,16 @@ class Player implements GameConstants {
 		if(!(this.x + moveDistX >= 0)){
 			this.x = 0;
 		}
-		if(!((this.y + moveDistY)+height+40 < GAME_H)) {
-			this.y = GAME_H-height-40;
+		if(!((this.y + moveDistY)+height+40 < GAME_H-50)) {
+			this.y = GAME_H-height-40-50;
 		}
-		if(!(this.y + moveDistX >= 0)){
-			this.y = 0;
+		if(!(this.y + moveDistY >= 100)){
+			this.y = 100;
 		}
 		
 		// remakes the player hitbox
 		hitbox = new Rectangle(this.x, this.y, width, height);
+		
 	}
 	
 	
@@ -258,19 +286,29 @@ class Player implements GameConstants {
 		}		
 	}
 	public void comboReset() {
-		combo = 1;
+		combo = 0;
 	}
-	public void bounceBack() {
-		health--;
-		if(lastM == 1) {
-			this.x += 100;
-		}
-		if(lastM == 2) {
-			this.x -= 100;
-		}
-		if(lastM == 3) {
-			this.y += 100;
-		}
+	public void touchedBoss() {
+		hurt(1, lastM+1, 100);
+	}
+	
+	// overload hurt method to either just apply damage or knockback the player
+	public void hurt(int damage) {
+		health -= damage;
+		currentAnimation = 9;
+		combo = 0;
+	}
+	public void hurt(int damage, int knockDirection, long knockTime) { //for knockdirection: 1, 2, 3, 4 are UP, RIGHT, LEFT, DOWN
+		health -= damage;
+		currentAnimation = 9;
+		knockTimer = knockTime;
+		knockStart = Time.getTime();
+		knockbackDir = knockDirection;
+		combo = 0;
+		arrowUp = false;
+		arrowDown = false;
+		arrowLeft = false;
+		arrowRight = false;
 	}
 	
 	// getters and setters

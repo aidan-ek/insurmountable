@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
 public class Boss implements GameConstants {
@@ -19,6 +20,7 @@ public class Boss implements GameConstants {
 	
 	// boss hitbox
     Rectangle hitbox;    
+    Rectangle attackHitbox;
     
     // boss animations arrays
     private int currentAnimation = 0;
@@ -26,11 +28,15 @@ public class Boss implements GameConstants {
     private ArrayList<BufferedImage>[] frames;
     
     // adjust when adding new animation sets
-    private final int TOTAL_ANIMATIONS = 1;
+    private final int TOTAL_ANIMATIONS = 2;
     
     // boss attack constants
     private long IDLE_DELAY = 100;
-    private long CLEAVE_WINDUP = 1000;
+    private long CLEAVE_WINDUP = 800;
+    private long CLEAVE_INDICATETIME = 300;
+    private long CLEAVE_AFTERHIT = 500;
+    private int CLEAVE_W = 800;
+    private int CLEAVE_H = 400;
     
 	
 	// parameter constructor
@@ -38,9 +44,12 @@ public class Boss implements GameConstants {
     	
     	// CURRENTLY MISSING BOSS SPRITES FOR PLACEHOLDER
 		loadSprites(fileName);
-		x = newX - (this.frames[0].get(1).getWidth() / 2);
+		width = this.frames[0].get(1).getWidth();
+		height = this.frames[0].get(1).getHeight();
+		x = newX - (width / 2);
 		y = newY;
 		hitbox = new Rectangle(this.x, this.y, this.frames[0].get(1).getWidth(), this.frames[0].get(1).getHeight());
+		attackHitbox = new Rectangle();
 	}
     
     
@@ -53,9 +62,9 @@ public class Boss implements GameConstants {
         	try {
         		int i = 0;
             	while(true) {
-            		i++;
             		this.frames[j].add(ImageIO.read(new File(fileName+j+i+".png")));
             		System.out.println("File Success: " + fileName+j+i+".png");
+            		i++;
             	}
             }
             catch(Exception e) {
@@ -73,12 +82,14 @@ public class Boss implements GameConstants {
     // draws hitbox and sprite
  	public void draw(Graphics g) {
  		
+ 		Graphics2D g2d = (Graphics2D) g;
  		// draws boss
  		g.drawImage(this.frames[currentAnimation].get(currentFrame), this.x, this.y, null);
  		
  		// boss hitbox
  		g.setColor(Color.red);
  		g.drawRect(this.x, this.y, this.frames[0].get(1).getWidth(), this.frames[0].get(1).getHeight());
+ 		g2d.draw(attackHitbox);
  	
 
  	}
@@ -98,7 +109,7 @@ public class Boss implements GameConstants {
  	
  	public void randomAttack() {
  		animationStartTime = Time.getTime();
- 		currentAnimation = ThreadLocalRandom.current().nextInt(1, TOTAL_ANIMATIONS + 1);
+ 		currentAnimation = ThreadLocalRandom.current().nextInt(1, TOTAL_ANIMATIONS);
  		currentFrame = 0;
  	}
  	
@@ -114,11 +125,23 @@ public class Boss implements GameConstants {
  	public void cleaveAttack() {
  		if (animationStartTime == 0) {
  			animationStartTime = Time.getTime();
- 			currentFrame = (currentFrame + 1)%frames[currentAnimation].size();
+ 			currentFrame = 1;
+ 			attackHitbox = new Rectangle(this.x, this.y, 0, 0);
  		} else {
- 			if (currentFrame == 0 && Time.since(animationStartTime) >= CLEAVE_WINDUP) {
- 				animationStartTime = 0;
- 				currentFrame = 1;
+ 			if (currentFrame == 0 && Time.since(animationStartTime) >= (CLEAVE_WINDUP + ThreadLocalRandom.current().nextInt(-400, 401))) {
+ 				animationStartTime = Time.getTime();
+ 				currentFrame++;
+ 			} 
+ 			if (currentFrame == 1 && Time.since(animationStartTime) >= CLEAVE_INDICATETIME) {
+ 				animationStartTime = Time.getTime();
+ 				currentFrame++;
+ 				attackHitbox = new Rectangle(this.x + width/2 - CLEAVE_W/2, this.y, CLEAVE_W, CLEAVE_H);
+ 			}
+ 			if (currentFrame == 2 && Time.since(animationStartTime) >= CLEAVE_AFTERHIT) {
+ 				animationStartTime = Time.getTime();
+ 				currentFrame = 0;
+ 				currentAnimation = 0;
+ 				attackHitbox = new Rectangle();
  			}
  		}
  	}
@@ -153,5 +176,8 @@ public class Boss implements GameConstants {
     }
     public void setY(int newY) {
     	y = newY;
+    }
+    public int getAnimation() {
+    	return currentAnimation;
     }
 }
