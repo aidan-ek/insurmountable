@@ -12,8 +12,7 @@ class PlayerKeyListener implements KeyListener,GameConstants {
         player = p;
     }
     
-    public void keyTyped(KeyEvent e) {  
-        char keyChar = e.getKeyChar();
+    public void keyTyped(KeyEvent e) {
     }
     
     public void keyPressed(KeyEvent e) {

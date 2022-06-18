@@ -3,13 +3,13 @@ package insurmountable;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
-class Player extends Fighters implements GameConstants { 
+class Player extends Fighters { 
 	private int lastM;
 	boolean dodgeRolling = false;
 	boolean invulnerable = false;
@@ -21,18 +21,19 @@ class Player extends Fighters implements GameConstants {
 	private long knockTimer, knockStart;
 	private int knockbackDir = 0; //0 is neutral. 1, 2, 3, 4 are UP, RIGHT, LEFT, DOWN
 	boolean arrowUp, arrowDown, arrowLeft, arrowRight, keyZ, keyX;
-  
-
-    
+	
+	private final int TOTAL_ANIMATIONS = 10;
         
     // parameter constructor
     public Player(int newX, int newY, String fileName) {
 		super(newX, newY);
-		TOTAL_ANIMATIONS = 10;
+		
 		loadSprites(fileName);
 		setWidth(this.frames[1].get(0).getWidth());
 		setHeight(this.frames[1].get(0).getHeight());
 		setHealth(PLAYER_MAXHP);	
+		hitbox = new Rectangle(getX(), getY(), getWidth(), getHeight());
+		attackHitbox = new Rectangle();
 
 	}
 //----------------------------------------        
@@ -64,27 +65,19 @@ class Player extends Fighters implements GameConstants {
 	// draws hitbox and sprite
 	public void draw(Graphics g) {
 		
+		int xOffset = 0;
+		int yOffset = 0;
+		switch (currentAnimation) {
+			case 0: xOffset = -20; break;
+			case 3: xOffset = -5; yOffset = -10; break;
+			case 4: xOffset = -20; yOffset = -10; break;
+		}
+		
 		// draws player
-		g.drawImage(this.frames[currentAnimation].get(currentFrame), getX(), getY(), null);
+		System.out.println(currentAnimation + ", " + currentFrame);
+		g.drawImage(this.frames[currentAnimation].get(currentFrame), getX() + xOffset, getY() + yOffset, null);
 		g.setColor(Color.red);
 		
-		// player hitbox
-		g.drawRect(getX(), getY(), getWidth(), getHeight());
-		if(lastM == 0 && attacking) {
-
-			g.drawRect(getX(), getY()+60, getWidth(), 50);
-		}
-		if((lastM == 1) && attacking) {
-			g.drawRect(getX()-60, getY(), 50, getHeight());
-			
-		}
-		if(lastM == 2 && attacking) {
-			g.drawRect(getX()+60, getY(), 50, getHeight());
-		}
-		if(lastM == 3 && attacking) {
-			g.drawRect(getX(), getY()-60, getWidth(),50);
-
-		}
 
 	}
 
@@ -174,7 +167,7 @@ class Player extends Fighters implements GameConstants {
 			}
 			
 			// resets animation if no keys are pressed
-			if(!arrowDown && !arrowUp && !arrowRight && !arrowLeft) {
+			if(!arrowDown && !arrowUp && !arrowRight && !arrowLeft && currentAnimation == frames[currentAnimation].size() && currentAnimation != 9) {
 				currentAnimation = lastM;
 				currentFrame = 0;
 			}
@@ -195,19 +188,19 @@ class Player extends Fighters implements GameConstants {
 				attacking = true;				
 				attackTimer = Time.getTime();		
 				if(lastM == 0) {
-					attackHitbox = new Rectangle(getX(), getY()+60, getWidth(), 50); 
+					attackHitbox = new Rectangle(getX(), getY()+60, 50, 50); 
 					currentAnimation = 8;
 				}
 				if(lastM == 1) {
-					attackHitbox = new Rectangle(getX()-60, getY(), 50, getHeight()); 
+					attackHitbox = new Rectangle(getX()-60, getY(), 50, 50); 
 					currentAnimation = 6;
 				}
 				if(lastM == 2) {
-					attackHitbox = new Rectangle(getX()+60, getY(), 50, getHeight());
+					attackHitbox = new Rectangle(getX()+60, getY(), 50, 50);
 					currentAnimation = 5;
 				}
 				if(lastM == 3) {
-					attackHitbox = new Rectangle(getX(), getY()-60, getWidth(),50);
+					attackHitbox = new Rectangle(getX(), getY()-60, 50, 50);
 					currentAnimation = 7;
 				}
 			}
@@ -234,22 +227,11 @@ class Player extends Fighters implements GameConstants {
 		if(!((getY() + moveDistY)+getHeight()+40 < GAME_H-50)) {
 			setY(GAME_H-getHeight()-40-50);
 		}
-		if(!(getY() + moveDistY >= 100)){
-			setY(100);
+		if(!(getY() + moveDistY >= 150)){
+			setY(150);
 		}
 		
-		// remakes the player hitbox
-		if(lastM == 1 || lastM == 2) {
-
-		setWidth(this.frames[1].get(0).getWidth());
-		setHeight(this.frames[1].get(0).getHeight());
-		}else if(lastM == 0) {
-		setWidth(this.frames[0].get(0).getWidth());
-		setHeight(this.frames[0].get(0).getHeight());
-		}else if(lastM == 3) {
-		setWidth(this.frames[3].get(0).getWidth());
-		setHeight(this.frames[3].get(0).getHeight());
-		}
+		//updates the player hitbox
 		hitbox = new Rectangle(getX(), getY(), getWidth(), getHeight());
 
 	}
@@ -263,7 +245,15 @@ class Player extends Fighters implements GameConstants {
 		combo = 0;
 	}
 	public void touchedBoss() {
-		hurt(1, lastM+1, 100);
+		if (dodgeRolling) {
+			rollX = 0;
+			rollY = 0;
+			rollTimer = 0;
+			hurt(0, lastM+1, 100);
+		} else {
+			hurt(1, lastM+1, 100);
+		}
+		
 	}
 	
 	// overload hurt method to either just apply damage or knockback the player

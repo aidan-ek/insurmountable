@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.IOException;
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Font;
 
 
 public class GUI implements GameConstants {
@@ -63,12 +62,14 @@ public class GUI implements GameConstants {
 		
 		// draws boss healthbar
 		int barWidth = BOSSBAR_W * boss.getHealth() / BOSS_MAXHP;
-		g.setColor(Color.DARK_GRAY);
+		g.setColor(Color.GRAY);
 		g.fillRect(GAME_W - BOSSBAR_W - BOSSBAR_EDGEOFFSET, GAME_H - BOSSBAR_H - BOSSBAR_EDGEOFFSET, BOSSBAR_W, BOSSBAR_H);
 		g.setColor(Color.RED);
 		if (boss.getHealth() > 0) {
 			g.fillRect(GAME_W - barWidth - BOSSBAR_EDGEOFFSET, GAME_H - BOSSBAR_H - BOSSBAR_EDGEOFFSET, barWidth, BOSSBAR_H);
 		}
+		
+		// player dodge timer
 		int dodgeBar = (int)(DODGEBAR_W * player.getRollCooldown() / DODGE_CD);
 		
 		g.setColor(Color.GREEN);

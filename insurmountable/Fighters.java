@@ -4,7 +4,7 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-abstract class Fighters {
+abstract class Fighters implements GameConstants {
 	private int x, y;
 	private int width, height;
 	int currentAnimation = 0;
