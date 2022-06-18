@@ -21,8 +21,7 @@ class PlayerKeyListener implements KeyListener {
         player = p;
     }
     
-    public void keyTyped(KeyEvent e) {  
-        char keyChar = e.getKeyChar();
+    public void keyTyped(KeyEvent e) {
     }
     
     //Check for keypressed and call method depending on key

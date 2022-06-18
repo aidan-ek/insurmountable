@@ -13,7 +13,6 @@ import java.awt.image.BufferedImage;
 import java.util.concurrent.ThreadLocalRandom;
 import javax.imageio.ImageIO;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.awt.Color;
 import java.awt.Graphics;
@@ -29,41 +28,18 @@ public class Boss extends Fighters {
 	
     Rectangle indicatorHitbox;
     
+
     private BufferedImage attackImage = null;
     private int attackImageX = 0, attackImageY = 0;
     private BufferedImage cleave;
     private BufferedImage comboSmall;
     private BufferedImage comboLarge;
+    private BufferedImage ray;
+    private long rayTimer = 0;
     private Player player;
     
     // adjust when adding new animation sets
-    private final int TOTAL_ANIMATIONS = 3;
-    
-    // boss attack constants
-    private long IDLE_DELAY = 100;
-    private int HIT_LINGER = 10; // number of frames the attack hitbox will linger after swing
-    // ------------------------
-    private long CLEAVE_WINDUP = 900;
-    private long CLEAVE_INDICATETIME = 400;
-    private long CLEAVE_AFTERHIT = 500;
-    private int CLEAVE_W = 800;
-    private int CLEAVE_H = 400;
-    // ------------------------
-    private long COMBO_SMALL_WINDUP = 300;
-    private long COMBO_SMALL_INDICATETIME = 300;
-    private long COMBO_SMALL_AFTERHIT = 1000;
-    private long COMBO_LARGE_WINDUP = 500;
-    private long COMBO_LARGE_INDICATETIME = 300;
-    private long COMBO_LARGE_AFTERHIT = 1000;
-    private int COMBO_SMALL_W = 200;
-    private int COMBO_SMALL_H = 100;
-    private int COMBO_LARGE_W = 400;
-    private int COMBO_LARGE_H = 200;
-    
-    
-    
-
-    
+    private final int TOTAL_ANIMATIONS = 4;
 	
 	// parameter constructor
     public Boss(int newX, int newY, String fileName) {
@@ -77,9 +53,13 @@ public class Boss extends Fighters {
 		attackHitbox = new Rectangle();
 		indicatorHitbox = new Rectangle();
 		setHealth(BOSS_MAXHP);
+		
+		// load attack images
 		cleave = loadAttack("cleave");
 		comboSmall = loadAttack("comboSmall");
 		comboLarge = loadAttack("comboLarge");
+		ray = loadAttack("ray");
+		
 		setX(newX - (getWidth() / 2));
 		setY(newY);
 		
@@ -129,19 +109,20 @@ public class Boss extends Fighters {
  		
  		Graphics2D g2d = (Graphics2D) g;
  		
- 		// draws boss attack and hitbox
- 		g.setColor(Color.red);
 
+ 		// draws the indicator area and boss attack
+ 		g.setColor(Color.RED);
  	 	g2d.fill(indicatorHitbox);
- 	 	g.drawImage(attackImage, attackImageX, attackImageY, null);	
+ 	 	g2d.drawImage(attackImage, attackImageX, attackImageY, null);	
  	 	
- 		// boss and boss hitbox
+ 		// draw boss
  	 	g.drawImage(this.frames[currentAnimation].get(currentFrame), getX(), getY(), null);
- 		g.drawRect(getX(), getY(), this.frames[0].get(1).getWidth(), this.frames[0].get(1).getHeight());
+ 	 	g2d.draw(hitbox);
 
  	}
  	
  	public void update(Player p) {
+ 		
  		player = p;
  		switch (currentAnimation) {
  			case 0: idle(); break;
@@ -166,10 +147,13 @@ public class Boss extends Fighters {
  	public void idle() {
  		if (animationStartTime == 0) {
  			animationStartTime = Time.getTime();
+ 		} 
+ 		if (Time.since(animationStartTime)%IDLE_DELAY+1 >= IDLE_DELAY) {
  			currentFrame = (currentFrame + 1)%frames[currentAnimation].size();
- 		} else if (Time.since(animationStartTime) >= IDLE_DELAY) {
- 			animationStartTime = 0;
  		}
+ 		if (Time.since(animationStartTime) >= ATTACK_DELAY) {
+ 			randomAttack();
+ 		} 
  	}
  	
  	// starts cleave attack
@@ -282,7 +266,48 @@ public class Boss extends Fighters {
  	}
  	
  	public void rayAttack() {
- 		
+ 		if (animationStartTime == 0) { // windup
+ 			animationStartTime = Time.getTime();
+ 			rayTimer = Time.getTime();
+
+ 			attackHitbox = new Rectangle();
+ 			
+ 		} else {
+ 			// resets attack hitbox so it doesnt linger after hitting
+ 			attackHitbox = new Rectangle();
+ 			
+ 			// loops between currentFrame 0 and 1 until the attack timer ends
+ 			if (currentFrame == 0 && Time.since(rayTimer) >= (RAY_WINDUP)) {
+ 				rayTimer = Time.getTime();
+ 				currentFrame = 1;
+ 				indicatorHitbox = new Rectangle(player.getX() + ThreadLocalRandom.current().nextInt(-100, 101), getY(), RAY_W, RAY_H);
+ 				
+ 			}  
+ 			// actual hit frames
+ 			if (currentFrame == 1 && Time.since(rayTimer) >= RAY_INDICATETIME) {
+ 				rayTimer = Time.getTime();
+ 				currentFrame = 2;
+ 				attackHitbox = indicatorHitbox;
+ 				indicatorHitbox = new Rectangle();
+ 				setAttackImage(ray, attackHitbox.x, attackHitbox.y);
+ 			}
+ 			// actual hit frames
+ 			if (currentFrame == 2 && Time.since(rayTimer) >= 200) {
+ 				rayTimer = Time.getTime();
+ 				currentFrame = 0;
+ 				setAttackImage(null, 0, 0);
+ 			}
+ 			
+ 			// ends the attack
+ 			if (Time.since(animationStartTime) >= RAY_ENDTIME) {
+ 				animationStartTime = 0;
+ 				currentFrame = 0;
+ 				currentAnimation = 0;
+ 				attackHitbox = new Rectangle();
+ 				setAttackImage(null, 0, 0);
+ 				indicatorHitbox = new Rectangle();
+ 			}
+ 		}
  	}
  	
  	public void hurt(int damage) {
@@ -294,7 +319,6 @@ public class Boss extends Fighters {
  		attackImageX = x;
  		attackImageY = y;
  	}
-    
 
     public int getAnimation() {
     	return currentAnimation;

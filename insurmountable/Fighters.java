@@ -13,8 +13,10 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+
 abstract class Fighters implements GameConstants{
 	//Declare variables
+
 	private int x, y;
 	private int width, height;
 	int currentAnimation = 0;

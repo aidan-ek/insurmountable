@@ -11,6 +11,9 @@ package insurmountable;
 import java.awt.Graphics;
 import java.io.File;
 import java.awt.Color;
+import java.awt.image.BufferedImage;
+
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 class GamePanelOOP extends JPanel implements GameConstants {
@@ -23,6 +26,8 @@ class GamePanelOOP extends JPanel implements GameConstants {
 	private StartScreen startScreen;
 	boolean bossHit = false;
 	private Thread gameThread;
+	
+	private BufferedImage background;
 
 
 	GamePanelOOP() {
@@ -33,6 +38,13 @@ class GamePanelOOP extends JPanel implements GameConstants {
 		endScreen = new EndScreen("src/images/GUI/");
 		boss = new Boss(GAME_W / 2, 50, "src/images/Boss/Boss");
 		gui = new GUI(player, boss);
+		
+		try {
+    		background = ImageIO.read(new File("src/images/background.png"));
+        }
+        catch(Exception e) {
+        	System.out.println("Error loading background: " + e);
+        }
 
 		// attach key and mouse listeners to the game panel
 		PlayerKeyListener keyListener = new PlayerKeyListener(player);
@@ -73,7 +85,7 @@ class GamePanelOOP extends JPanel implements GameConstants {
 	// Create menu method
 	public void menu() {
 		// Start while loop for menu
-		while (!startScreen.menu) {
+		while (!StartScreen.menu) {
 			// As long as they dont click start, they will be in the menu
 			this.repaint();
 		}
@@ -91,7 +103,7 @@ class GamePanelOOP extends JPanel implements GameConstants {
 			boss.update(player);
 			updateCollides(player, boss);
 			gui.update(player, boss);
-			endScreen.gameEnd = checkDeath(player, boss);
+			EndScreen.gameEnd = checkDeath(player, boss);
 			
 			// repaint the window
 			this.repaint();
@@ -121,14 +133,14 @@ class GamePanelOOP extends JPanel implements GameConstants {
 	// updates all hitbox collisions
 	public void updateCollides(Player p, Boss b) {
 		
-		
+		// damages and pushes player when they touch the boss
+		if(p.hitbox.intersects(b.hitbox) && !p.invulnerable) {
+			p.touchedBoss();
+		}
 		
 		// put all attack collision checkers here
 		if (!p.dodgeRolling && !p.invulnerable) {
-			// damages and pushes player when they touch the boss
-			if(p.hitbox.intersects(b.hitbox)) {
-				p.touchedBoss();
-			}
+			
 			
 			// cleave damage
 			if(p.hitbox.intersects(b.attackHitbox) && b.getAnimation() == 1) {
@@ -140,6 +152,11 @@ class GamePanelOOP extends JPanel implements GameConstants {
 				p.hurt(1, 4, 150);
 			}
 			
+			// combo damage
+			if(p.hitbox.intersects(b.attackHitbox) && b.getAnimation() == 3) {
+				p.hurt(1, 4, 150);
+			}
+			
 		}
 		
 		// Check if player attack hit
@@ -147,11 +164,8 @@ class GamePanelOOP extends JPanel implements GameConstants {
 			if (p.attackHitbox.intersects(b.hitbox)) {
 				if (!bossHit) {
 					bossHit = true;
-					System.out.println("player attack intersects boss hitbox");
 					p.comboAdd();
-					System.out.println(p.getCombo());
 					boss.hurt(p.getCombo());	
-					boss.randomAttack();;
 				}
 			}
 		} else {
@@ -167,31 +181,31 @@ class GamePanelOOP extends JPanel implements GameConstants {
 	}
 
 	// paintComponnent runs every time the window gets refreshed
+	@Override
 	public void paintComponent(Graphics g) {
 
 		super.paintComponent(g); // required
 		setDoubleBuffered(true);
 
 		// While they dont click start display the menu
-		if (!startScreen.menu && !startScreen.info) {
+		if (!StartScreen.menu && !StartScreen.info) {
 			g.setColor(Color.white);
 			g.fillRect(0, 0, GAME_W, GAME_H);
 			g.drawImage(startScreen.start, -40, -40, null);
 
-			// Display when they want to check moves
-		}else if(startScreen.info) {
+
+			// When they enter game display game
+		}else if(StartScreen.info) {
 			g.drawImage(startScreen.moves, 0, 0, null);
 		} 
-		//Display while they are in the game
-		else if (startScreen.menu && !endScreen.gameEnd) {
-			g.setColor(Color.white);
-			g.fillRect(0, 0, GAME_W, GAME_H);
+		else if (StartScreen.menu && !EndScreen.gameEnd) {
+			g.drawImage(background, 0, 0, null);
 			boss.draw(g);
 			gui.draw(g);
 			player.draw(g);
-		//Display when game done
-		} else if (endScreen.gameEnd) {
-			//Display if player wins
+			
+		} else if (EndScreen.gameEnd) {
+
 			if (boss.getHealth() <= 0) {
 				g.setColor(Color.white);
 				g.fillRect(0, 0, GAME_W, GAME_H);

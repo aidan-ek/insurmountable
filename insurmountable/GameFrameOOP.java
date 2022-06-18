@@ -16,7 +16,12 @@ import javax.swing.JFrame;
 
 class GameFrameOOP extends JFrame implements GameConstants{ 
     
-    GameFrameOOP() { 
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	GameFrameOOP() { 
     	
         super("Game Screen - Use arrows, a, d, mouse");  
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
