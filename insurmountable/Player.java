@@ -156,6 +156,7 @@ class Player implements GameConstants {
 					knockTimer = 0;
 					knockStart = 0;
 					currentAnimation = 0;
+					currentFrame = 0;
 				}
 			} else {
 				currentAnimation = 0;

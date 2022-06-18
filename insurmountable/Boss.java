@@ -22,21 +22,24 @@ public class Boss implements GameConstants {
 	// boss hitbox
     Rectangle hitbox;    
     Rectangle attackHitbox;
+    Rectangle indicatorHitbox;
     
     // boss animations arrays
     private int currentAnimation = 0;
     private int currentFrame = 0;
     private ArrayList<BufferedImage>[] frames;
     private BufferedImage attackImage = null;
+    private int attackImageX = 0, attackImageY = 0;
     private BufferedImage cleave;
     private BufferedImage comboSmall;
     private BufferedImage comboLarge;
     
     // adjust when adding new animation sets
-    private final int TOTAL_ANIMATIONS = 2;
+    private final int TOTAL_ANIMATIONS = 3;
     
     // boss attack constants
     private long IDLE_DELAY = 100;
+    private int HIT_LINGER = 10; // number of frames the attack hitbox will linger after swing
     // ------------------------
     private long CLEAVE_WINDUP = 900;
     private long CLEAVE_INDICATETIME = 400;
@@ -46,12 +49,15 @@ public class Boss implements GameConstants {
     // ------------------------
     private long COMBO_SMALL_WINDUP = 300;
     private long COMBO_SMALL_INDICATETIME = 300;
-    private long COMBO_LARGE_WINDUP = 800;
+    private long COMBO_SMALL_AFTERHIT = 1000;
+    private long COMBO_LARGE_WINDUP = 500;
+    private long COMBO_LARGE_INDICATETIME = 300;
     private long COMBO_LARGE_AFTERHIT = 1000;
     private int COMBO_SMALL_W = 200;
     private int COMBO_SMALL_H = 100;
     private int COMBO_LARGE_W = 400;
     private int COMBO_LARGE_H = 200;
+    
     
     
 
@@ -71,7 +77,7 @@ public class Boss implements GameConstants {
 		y = newY;
 		hitbox = new Rectangle(this.x, this.y, this.frames[0].get(1).getWidth(), this.frames[0].get(1).getHeight());
 		attackHitbox = new Rectangle();
-		
+		indicatorHitbox = new Rectangle();
 		
 	}
     
@@ -117,18 +123,15 @@ public class Boss implements GameConstants {
  		
  		
  		Graphics2D g2d = (Graphics2D) g;
- 		// draws boss
- 		g.drawImage(this.frames[currentAnimation].get(currentFrame), this.x, this.y, null);
- 		
- 		// boss hitbox
- 		g.setColor(Color.red);
- 		g.drawRect(this.x, this.y, this.frames[0].get(1).getWidth(), this.frames[0].get(1).getHeight());
  		
  		// draws boss attack and hitbox
- 		g2d.draw(attackHitbox);
- 	 	g.drawImage(attackImage, attackHitbox.x, attackHitbox.y, null);	
- 		
- 	
+ 		g.setColor(Color.red);
+ 	 	g2d.fill(indicatorHitbox);
+ 	 	g.drawImage(attackImage, attackImageX, attackImageY, null);	
+ 	 	
+ 		// boss and boss hitbox
+ 	 	g.drawImage(this.frames[currentAnimation].get(currentFrame), this.x, this.y, null);
+ 		g.drawRect(this.x, this.y, this.frames[0].get(1).getWidth(), this.frames[0].get(1).getHeight());
 
  	}
  	
@@ -147,7 +150,7 @@ public class Boss implements GameConstants {
  	
  	// sets the current attack to a random one
  	public void randomAttack() {
- 		animationStartTime = Time.getTime();
+ 		animationStartTime = 0;
  		currentAnimation = ThreadLocalRandom.current().nextInt(1, TOTAL_ANIMATIONS);
  		currentFrame = 0;
  	}
@@ -167,25 +170,29 @@ public class Boss implements GameConstants {
  	public void cleaveAttack() {
  		if (animationStartTime == 0) { // windup
  			animationStartTime = Time.getTime();
- 			currentFrame = 1;
- 			attackHitbox = new Rectangle(this.x, this.y, 0, 0);
+ 			attackHitbox = new Rectangle();
+ 			indicatorHitbox = new Rectangle(this.x + width/2 - CLEAVE_W/2, this.y, CLEAVE_W, CLEAVE_H);
  		} else { //indicator
+ 			// resets attack hitbox so it doesnt linger after hitting
+ 			attackHitbox = new Rectangle();
  			if (currentFrame == 0 && Time.since(animationStartTime) >= (CLEAVE_WINDUP + ThreadLocalRandom.current().nextInt(-400, 401))) {
  				animationStartTime = Time.getTime();
  				currentFrame++;
+ 				
  			}  // actual hit frames
  			if (currentFrame == 1 && Time.since(animationStartTime) >= CLEAVE_INDICATETIME) {
  				animationStartTime = Time.getTime();
  				currentFrame++;
- 				attackHitbox = new Rectangle(this.x + width/2 - CLEAVE_W/2, this.y, CLEAVE_W, CLEAVE_H);
- 				attackImage = cleave;
+ 				attackHitbox = indicatorHitbox;
+ 				indicatorHitbox = new Rectangle();
+ 				setAttackImage(cleave, attackHitbox.x, attackHitbox.y);
  			} // after hit frames
  			if (currentFrame == 2 && Time.since(animationStartTime) >= CLEAVE_AFTERHIT) {
  				animationStartTime = Time.getTime();
  				currentFrame = 0;
  				currentAnimation = 0;
  				attackHitbox = new Rectangle();
- 				attackImage = null;
+ 				setAttackImage(null, 0, 0);
  			}
  		}
  	}
@@ -193,34 +200,75 @@ public class Boss implements GameConstants {
  	public void comboAttack() {
  		if (animationStartTime == 0) { // windup first hit
  			animationStartTime = Time.getTime();
- 			currentFrame = 1;
- 			attackHitbox = new Rectangle(this.x, this.y, 0, 0);
+ 			attackHitbox = new Rectangle();
+ 			indicatorHitbox = new Rectangle(player.getX() - (COMBO_SMALL_W-player.getWidth())/2, player.getY()-COMBO_SMALL_H/2, COMBO_SMALL_W, COMBO_SMALL_H);
  		} else { 
+ 			// resets attack hitbox so it doesnt linger after hitting
+ 			attackHitbox = new Rectangle();
  			// first hit indicator
  			if (currentFrame == 0 && Time.since(animationStartTime) >= COMBO_SMALL_WINDUP) {
  				animationStartTime = Time.getTime();
  				currentFrame++;
+ 				
  			}  
  			// first hit frames
  			if (currentFrame == 1 && Time.since(animationStartTime) >= COMBO_SMALL_INDICATETIME) {
  				animationStartTime = Time.getTime();
  				currentFrame++;
- 				attackHitbox = new Rectangle(player.getX() + width/2 - COMBO_SMALL_W/2, player.getY()-COMBO_SMALL_H/2, COMBO_SMALL_W, COMBO_SMALL_H);
- 				attackImage = comboSmall;
- 			} 
+ 				attackHitbox = indicatorHitbox;
+ 				indicatorHitbox = new Rectangle();
+ 				setAttackImage(comboSmall, attackHitbox.x, attackHitbox.y);
+ 			}
  			// second hit windup
- 			if (currentFrame == 2 && Time.since(animationStartTime) >= COMBO_SMALL_WINDUP) {
+ 			if (currentFrame == 2 && Time.since(animationStartTime) >= COMBO_SMALL_AFTERHIT) {
  				animationStartTime = Time.getTime();
  				currentFrame++;
- 			}  
- 			
- 			if (currentFrame == 2 && Time.since(animationStartTime) >= CLEAVE_AFTERHIT) {
- 				animationStartTime = Time.getTime();
- 				currentFrame = 0;
- 				currentAnimation = 0;
  				attackHitbox = new Rectangle();
- 				attackImage = null;
+ 				setAttackImage(null, 0, 0);
+ 				indicatorHitbox = new Rectangle(player.getX() - (COMBO_SMALL_W-player.getWidth())/2, player.getY()-COMBO_SMALL_H/2, COMBO_SMALL_W, COMBO_SMALL_H);
+ 			}  
+ 			// second hit indicator
+ 			if (currentFrame == 3 && Time.since(animationStartTime) >= COMBO_SMALL_WINDUP) {
+ 				animationStartTime = Time.getTime();
+ 				currentFrame++;
+ 			} 
+ 			// second hit frames
+ 			if (currentFrame == 4 && Time.since(animationStartTime) >= COMBO_SMALL_INDICATETIME) {
+ 				animationStartTime = Time.getTime();
+ 				currentFrame++;
+ 				attackHitbox = indicatorHitbox;
+ 				indicatorHitbox = new Rectangle();
+ 				setAttackImage(comboSmall, attackHitbox.x, attackHitbox.y);
  			}
+ 			// large third hit windup
+ 			if (currentFrame == 5 && Time.since(animationStartTime) >= COMBO_SMALL_AFTERHIT) {
+ 				animationStartTime = Time.getTime();
+ 				currentFrame++;
+ 				attackHitbox = new Rectangle();
+ 				setAttackImage(null, 0, 0);
+ 				indicatorHitbox = new Rectangle(player.getX() - (COMBO_LARGE_W-player.getWidth())/2, player.getY()-COMBO_LARGE_H/2, COMBO_LARGE_W, COMBO_LARGE_H);
+ 			}  
+ 			// third hit indicator
+ 			if (currentFrame == 6 && Time.since(animationStartTime) >= COMBO_LARGE_WINDUP) {
+ 				animationStartTime = Time.getTime();
+ 				currentFrame++;
+ 			} 
+ 			// third hit frames
+ 			if (currentFrame == 7 && Time.since(animationStartTime) >= COMBO_LARGE_INDICATETIME) {
+ 				animationStartTime = Time.getTime();
+ 				currentFrame++;
+ 				attackHitbox = indicatorHitbox;
+ 				indicatorHitbox = new Rectangle();
+ 				setAttackImage(comboLarge, attackHitbox.x, attackHitbox.y);
+ 			}
+ 			// end of attack
+ 			if (currentFrame == 8 && Time.since(animationStartTime) >= COMBO_LARGE_AFTERHIT) {
+ 				animationStartTime = 0;
+ 				currentFrame = 0;
+ 				attackHitbox = new Rectangle();
+ 				setAttackImage(null, 0, 0);
+ 				currentAnimation = 0;
+ 			}  
  		}
  	}
  	
@@ -230,6 +278,12 @@ public class Boss implements GameConstants {
  	
  	public void hurt(int damage) {
  		health -= damage;
+ 	}
+ 	
+ 	public void setAttackImage(BufferedImage image, int x, int y) {
+ 		attackImage = image;
+ 		attackImageX = x;
+ 		attackImageY = y;
  	}
     
     // getters and setters
