@@ -13,10 +13,10 @@ interface GameConstants {
     static final long DODGE_CD = 2000;
     static final long DODGE_TIME = 300;
     static final long ATTACK_TIME = 150;
-    static final int PLAYER_MAXHP = 5;
+    static final int PLAYER_MAXHP = 8;
     static final int BOSS_MAXHP = 300;
     static final int MAX_COMBO = 10;
     static final int GRAVITY = 2;
-    static final int FRAME_TIME = 30;
+    static final int FRAME_TIME = 40;
     static final int KNOCKBACK_SPEED = 10;
 }

@@ -81,7 +81,7 @@ class GamePanelOOP extends JPanel implements GameConstants {
 
 			// update the gameplay
 			player.move();
-			boss.update();
+			boss.update(player);
 			updateCollides(player, boss);
 			gui.update(player, boss);
 			endScreen.gameEnd = checkDeath(player, boss);
@@ -108,18 +108,27 @@ class GamePanelOOP extends JPanel implements GameConstants {
 		}
 		
 	}
-
+	
+	// updates all hitbox collisions
 	public void updateCollides(Player p, Boss b) {
 		
-		if(p.hitbox.intersects(b.hitbox)) {
-			p.touchedBoss();
-		}
+		
 		
 		// put all attack collision checkers here
 		if (!p.dodgeRolling && !p.invulnerable) {
+			// damages and pushes player when they touch the boss
+			if(p.hitbox.intersects(b.hitbox)) {
+				p.touchedBoss();
+			}
 			
+			// cleave damage
 			if(p.hitbox.intersects(b.attackHitbox) && b.getAnimation() == 1) {
 				p.hurt(2, 4, 300);
+			}
+			
+			// combo damage
+			if(p.hitbox.intersects(b.attackHitbox) && b.getAnimation() == 2) {
+				p.hurt(1, 4, 150);
 			}
 			
 		}
@@ -139,12 +148,6 @@ class GamePanelOOP extends JPanel implements GameConstants {
 		} else {
 			bossHit = false;
 		}
-
-//        if(b.attacking) {
-//         if(p.attackHitbox.intersects(b.hitbox)) {
-//          
-//         }
-//        }
 		
 		// prevents repeated hits every frame. always keep at end of updateCollides
 		if(p.hitbox.intersects(b.hitbox) || p.hitbox.intersects(b.attackHitbox)) {

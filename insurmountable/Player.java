@@ -33,7 +33,6 @@ class Player extends Fighters implements GameConstants {
 		setWidth(this.frames[1].get(0).getWidth());
 		setHeight(this.frames[1].get(0).getHeight());
 		setHealth(PLAYER_MAXHP);	
-		
 
 	}
 //----------------------------------------        
@@ -72,6 +71,7 @@ class Player extends Fighters implements GameConstants {
 		// player hitbox
 		g.drawRect(getX(), getY(), getWidth(), getHeight());
 		if(lastM == 0 && attacking) {
+
 			g.drawRect(getX(), getY()+60, getWidth(), 50);
 		}
 		if((lastM == 1) && attacking) {
@@ -83,6 +83,7 @@ class Player extends Fighters implements GameConstants {
 		}
 		if(lastM == 3 && attacking) {
 			g.drawRect(getX(), getY()-60, getWidth(),50);
+
 		}
 
 	}
@@ -121,6 +122,7 @@ class Player extends Fighters implements GameConstants {
 					knockTimer = 0;
 					knockStart = 0;
 					currentAnimation = 0;
+					currentFrame = 0;
 				}
 			} else {
 				currentAnimation = 0;
@@ -238,6 +240,7 @@ class Player extends Fighters implements GameConstants {
 		
 		// remakes the player hitbox
 		if(lastM == 1 || lastM == 2) {
+
 		setWidth(this.frames[1].get(0).getWidth());
 		setHeight(this.frames[1].get(0).getHeight());
 		}else if(lastM == 0) {
@@ -248,6 +251,7 @@ class Player extends Fighters implements GameConstants {
 		setHeight(this.frames[3].get(0).getHeight());
 		}
 		hitbox = new Rectangle(getX(), getY(), getWidth(), getHeight());
+
 	}
 	
 	public void comboAdd() {
