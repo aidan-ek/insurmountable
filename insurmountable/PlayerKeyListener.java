@@ -1,10 +1,19 @@
-// class for the keyboard listener - detects key actions and runs the corresponding code
 package insurmountable;
 
+
+/**
+ * [PlayerKeyListener.java]
+ * class for the keyboard listener 
+ * @author Mohammad/Aiden
+ * Date June 08, 2022
+ */
+
+
+//Import Required
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-class PlayerKeyListener implements KeyListener,GameConstants {
+class PlayerKeyListener implements KeyListener {
     //reference to items effected by keyboard actions
     private Player player;
    
@@ -15,6 +24,7 @@ class PlayerKeyListener implements KeyListener,GameConstants {
     public void keyTyped(KeyEvent e) {
     }
     
+    //Check for keypressed and call method depending on key
     public void keyPressed(KeyEvent e) {
         int keyCode = e.getKeyCode();
         if (keyCode == KeyEvent.VK_LEFT){
@@ -33,7 +43,7 @@ class PlayerKeyListener implements KeyListener,GameConstants {
         
         
     }   
-    
+    //Check for keyreleased and call method depending on key
     public void keyReleased(KeyEvent e) {
     	 int keyCode = e.getKeyCode();
          if (keyCode == KeyEvent.VK_LEFT){

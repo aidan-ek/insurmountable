@@ -1,6 +1,13 @@
-//class for the the game area - this is where all the drawing of the screen occurs
 package insurmountable;
 
+/**
+ * [GamePanelOOP.java]
+ * class for the game area
+ * @author Mohammad/Aiden
+ * Date June 08, 2022
+ */
+
+//Import Required
 import java.awt.Graphics;
 import java.io.File;
 import java.awt.Color;
@@ -109,10 +116,12 @@ class GamePanelOOP extends JPanel implements GameConstants {
 			}
 		}
 	}
-	
+	//Check if player or boss is dead
 	public boolean checkDeath(Player p, Boss b) {
+		//if player is dead return true
 		if(p.getHealth() <= 0) {
 			return true;
+		//if boss is dead return true
 		}else if(b.getHealth() <= 0) {
 			return true;
 		}else {
@@ -184,6 +193,7 @@ class GamePanelOOP extends JPanel implements GameConstants {
 			g.fillRect(0, 0, GAME_W, GAME_H);
 			g.drawImage(startScreen.start, -40, -40, null);
 
+
 			// When they enter game display game
 		}else if(StartScreen.info) {
 			g.drawImage(startScreen.moves, 0, 0, null);
@@ -195,12 +205,14 @@ class GamePanelOOP extends JPanel implements GameConstants {
 			player.draw(g);
 			
 		} else if (EndScreen.gameEnd) {
+
 			if (boss.getHealth() <= 0) {
 				g.setColor(Color.white);
 				g.fillRect(0, 0, GAME_W, GAME_H);
 				g.drawImage(endScreen.playerWon, 0, 0, null);
 				gameThread.stop();
 			}
+			//Display if player loses
 			else {
 				g.setColor(Color.white);
 				g.fillRect(0, 0, GAME_W, GAME_H);

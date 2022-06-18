@@ -1,5 +1,14 @@
 package insurmountable;
 
+
+/**
+ * [GUI.java]
+ * Manage all graphics user interface such as dodge cooldown, health bar, etc.
+ * @author Mohammad/Aiden
+ * Date June 15, 2022
+ */
+
+//Import required
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import java.io.File;
@@ -10,6 +19,7 @@ import java.awt.Graphics;
 
 public class GUI implements GameConstants {
 	
+	//Declare variables
 	private static BufferedImage hitpointFull = loadSprite("hitpoint_full");
 	private static BufferedImage hitpointEmpty = loadSprite("hitpoint_empty");
 	private static BufferedImage comboText = loadSprite("combo");
@@ -37,6 +47,8 @@ public class GUI implements GameConstants {
 		}
 	}
 	
+	
+	//Load Sprites
 	private static BufferedImage loadSprite(String fileName){
         try {
 			return ImageIO.read(new File("src/images/GUI/" + fileName + ".png"));
@@ -72,6 +84,7 @@ public class GUI implements GameConstants {
 		// player dodge timer
 		int dodgeBar = (int)(DODGEBAR_W * player.getRollCooldown() / DODGE_CD);
 		
+		//Draw dodge bar cooldown
 		g.setColor(Color.GREEN);
 		if (player.getRollCooldown() < DODGE_CD) {
 			g.fillRect(player.getX()+dodgeBar/2, player.getY()+player.getHeight(), (DODGEBAR_W) - dodgeBar, DODGEBAR_H);
@@ -85,6 +98,7 @@ public class GUI implements GameConstants {
 
 	}
 	
+	//Update fighter data
 	public void update(Player newPlayer, Boss newBoss) {
 		boss = newBoss;
 		player = newPlayer;

@@ -1,5 +1,14 @@
 package insurmountable;
 
+/**
+ * [Player.java]
+ * Create user's player
+ * @author Mohammad/Aiden
+ * Date June 08, 2022
+ */
+
+
+//Import required
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import java.io.File;
@@ -10,6 +19,8 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
 class Player extends Fighters { 
+
+	//Declare variables
 	private int lastM;
 	boolean dodgeRolling = false;
 	boolean invulnerable = false;
@@ -97,6 +108,7 @@ class Player extends Fighters {
 			attackCooldown = 0;
 		}
 		
+		//Display knockback
 		if (currentAnimation == 9) {
 			if (knockbackDir > 0) {
 				currentFrame = (currentFrame + 1)%frames[currentAnimation].size();
@@ -125,6 +137,7 @@ class Player extends Fighters {
 		// player cannot move while rolling/attacking
 		else if(attacking) {
 			currentFrame = (currentFrame + 1)%frames[currentAnimation].size();
+			//Time for attack
 			if((Time.since(attackTimer)) >= ATTACK_TIME) {
 				attacking = false;
 				attackCooldown = Time.getTime();
@@ -135,11 +148,13 @@ class Player extends Fighters {
 			moveDistY = rollY;
 			currentAnimation = 4;
 			currentFrame = (currentFrame + 1)%frames[currentAnimation].size();
+			//Time for dodge
 			if((Time.since(rollTimer)) >= DODGE_TIME) {
 				dodgeRolling = false;
 				rollCooldown = Time.getTime();
 			}
 		} else {
+			// cycles through movement frames using mod and change distance
 			if (arrowDown) {
 				currentAnimation = 0;
 				currentFrame = (currentFrame + 1)%frames[currentAnimation].size();
@@ -147,7 +162,6 @@ class Player extends Fighters {
 				lastM = 0;
 			}
 			if (arrowLeft) {
-				// cycles through movement frames using mod
 				currentAnimation = 1;
 				currentFrame = (currentFrame + 1)%frames[currentAnimation].size();
 				moveDistX -= RUN_SPEED;
@@ -182,11 +196,13 @@ class Player extends Fighters {
 					moveDistX /= 1.41;
 					moveDistY /= 1.41;
 				}
+				//Roll speeds
 				rollX = Integer.signum(moveDistX) * DODGE_SPEED;
 				rollY = Integer.signum(moveDistY) * DODGE_SPEED;
 			} else if(keyZ && attackCooldown == 0) {
 				attacking = true;				
-				attackTimer = Time.getTime();		
+				attackTimer = Time.getTime();	
+				//Create hitboxes for attacking 
 				if(lastM == 0) {
 					attackHitbox = new Rectangle(getX(), getY()+60, 50, 50); 
 					currentAnimation = 8;
@@ -204,7 +220,6 @@ class Player extends Fighters {
 					currentAnimation = 7;
 				}
 			}
-
 		}
 		
 		// normalizes the vectors to not have increased speed diagonally
@@ -217,7 +232,7 @@ class Player extends Fighters {
 		setX(getX() +moveDistX);
 		setY(getY() +moveDistY);
 		
-		//Borders 
+		//Create borders 
 		if(!((getX() + moveDistX)+getWidth()+13 < GAME_W)) {
 			setX(GAME_W-getWidth()-13);
 		}
@@ -236,14 +251,19 @@ class Player extends Fighters {
 
 	}
 	
+	//Create combo method 
 	public void comboAdd() {
 		if(combo < MAX_COMBO) {
 			combo += 1;
 		}		
 	}
+	
+	//Create combo reset method
 	public void comboReset() {
 		combo = 0;
 	}
+	
+	//Create touched boss method
 	public void touchedBoss() {
 		if (dodgeRolling) {
 			rollX = 0;
@@ -254,6 +274,7 @@ class Player extends Fighters {
 			hurt(1, lastM+1, 100);
 		}
 		
+
 	}
 	
 	// overload hurt method to either just apply damage or knockback the player
