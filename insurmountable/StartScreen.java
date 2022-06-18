@@ -22,6 +22,7 @@ public class StartScreen {
 	//Start load sprite method
 	public void loadSprite(String fileName) {
 		try { 
+			//Add the images of the start screen and the moves screen
 			start = ImageIO.read(new File(fileName + "startscreen.png"));
 			moves = ImageIO.read(new File(fileName + "infoscreen.png"));
 		} catch (IOException e) {

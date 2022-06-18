@@ -4,7 +4,7 @@ package insurmountable;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-class PlayerKeyListener implements KeyListener,GameConstants {
+class PlayerKeyListener implements KeyListener {
     //reference to items effected by keyboard actions
     private Player player;
    
@@ -16,6 +16,7 @@ class PlayerKeyListener implements KeyListener,GameConstants {
         char keyChar = e.getKeyChar();
     }
     
+    //Check for keypressed and call method depending on key
     public void keyPressed(KeyEvent e) {
         int keyCode = e.getKeyCode();
         if (keyCode == KeyEvent.VK_LEFT){
@@ -34,7 +35,7 @@ class PlayerKeyListener implements KeyListener,GameConstants {
         
         
     }   
-    
+    //Check for keyreleased and call method depending on key
     public void keyReleased(KeyEvent e) {
     	 int keyCode = e.getKeyCode();
          if (keyCode == KeyEvent.VK_LEFT){

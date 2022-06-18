@@ -97,10 +97,12 @@ class GamePanelOOP extends JPanel implements GameConstants {
 			}
 		}
 	}
-	
+	//Check if player or boss is dead
 	public boolean checkDeath(Player p, Boss b) {
+		//if player is dead return true
 		if(p.getHealth() <= 0) {
 			return true;
+		//if boss is dead return true
 		}else if(b.getHealth() <= 0) {
 			return true;
 		}else {
@@ -169,23 +171,27 @@ class GamePanelOOP extends JPanel implements GameConstants {
 			g.fillRect(0, 0, GAME_W, GAME_H);
 			g.drawImage(startScreen.start, -40, -40, null);
 
-			// When they enter game display game
+			// Display when they want to check moves
 		}else if(startScreen.info) {
 			g.drawImage(startScreen.moves, 0, 0, null);
 		} 
+		//Display while they are in the game
 		else if (startScreen.menu && !endScreen.gameEnd) {
 			g.setColor(Color.white);
 			g.fillRect(0, 0, GAME_W, GAME_H);
 			boss.draw(g);
 			gui.draw(g);
 			player.draw(g);
+		//Display when game done
 		} else if (endScreen.gameEnd) {
+			//Display if player wins
 			if (boss.getHealth() <= 0) {
 				g.setColor(Color.white);
 				g.fillRect(0, 0, GAME_W, GAME_H);
 				g.drawImage(endScreen.playerWon, 0, 0, null);
 				gameThread.stop();
 			}
+			//Display if player loses
 			else {
 				g.setColor(Color.white);
 				g.fillRect(0, 0, GAME_W, GAME_H);

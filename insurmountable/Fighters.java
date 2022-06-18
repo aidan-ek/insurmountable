@@ -4,7 +4,8 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
-abstract class Fighters {
+abstract class Fighters implements GameConstants{
+	//Declare variables
 	private int x, y;
 	private int width, height;
 	int currentAnimation = 0;
@@ -14,11 +15,14 @@ abstract class Fighters {
     Rectangle hitbox;    
     Rectangle attackHitbox;
     private int health;
+    
+    //Create constructor 
     public Fighters(int newX, int newY){
     	this.x = newX;
     	this.y = newY;
     }
 	
+    //Create getters and setters
 	public int getX() {
 		return this.x;
 	}
@@ -56,6 +60,8 @@ abstract class Fighters {
     public void setHealth(int newHealth) {
     	health = newHealth;
     }
+    
+    //Create hurt method
     public void hurt(int damage) {
  	}
 

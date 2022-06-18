@@ -12,7 +12,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
 
-public class Boss extends Fighters implements GameConstants {
+public class Boss extends Fighters {
 
 	
 	// timer for antimations

@@ -21,6 +21,7 @@ public class EndScreen {
 	//Start load sprite method
 	public void loadSprite(String fileName) {
 		try {
+			//load win and lose screens
 			playerWon = ImageIO.read(new File(fileName + "won" + ".png"));
 			playerLost = ImageIO.read(new File(fileName+ "lost" + ".png"));
 		} catch (IOException e) {

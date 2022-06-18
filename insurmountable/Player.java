@@ -9,7 +9,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 
-class Player extends Fighters implements GameConstants { 
+class Player extends Fighters { 
+	//Declare variables
 	private int lastM;
 	boolean dodgeRolling = false;
 	boolean invulnerable = false;
@@ -104,6 +105,7 @@ class Player extends Fighters implements GameConstants {
 			attackCooldown = 0;
 		}
 		
+		//Display knockback
 		if (currentAnimation == 9) {
 			if (knockbackDir > 0) {
 				currentFrame = (currentFrame + 1)%frames[currentAnimation].size();
@@ -132,6 +134,7 @@ class Player extends Fighters implements GameConstants {
 		// player cannot move while rolling/attacking
 		else if(attacking) {
 			currentFrame = (currentFrame + 1)%frames[currentAnimation].size();
+			//Time for attack
 			if((Time.since(attackTimer)) >= ATTACK_TIME) {
 				attacking = false;
 				attackCooldown = Time.getTime();
@@ -142,11 +145,13 @@ class Player extends Fighters implements GameConstants {
 			moveDistY = rollY;
 			currentAnimation = 4;
 			currentFrame = (currentFrame + 1)%frames[currentAnimation].size();
+			//Time for dodge
 			if((Time.since(rollTimer)) >= DODGE_TIME) {
 				dodgeRolling = false;
 				rollCooldown = Time.getTime();
 			}
 		} else {
+			// cycles through movement frames using mod and change distance
 			if (arrowDown) {
 				currentAnimation = 0;
 				currentFrame = (currentFrame + 1)%frames[currentAnimation].size();
@@ -154,7 +159,6 @@ class Player extends Fighters implements GameConstants {
 				lastM = 0;
 			}
 			if (arrowLeft) {
-				// cycles through movement frames using mod
 				currentAnimation = 1;
 				currentFrame = (currentFrame + 1)%frames[currentAnimation].size();
 				moveDistX -= RUN_SPEED;
@@ -189,11 +193,13 @@ class Player extends Fighters implements GameConstants {
 					moveDistX /= 1.41;
 					moveDistY /= 1.41;
 				}
+				//Roll speeds
 				rollX = Integer.signum(moveDistX) * DODGE_SPEED;
 				rollY = Integer.signum(moveDistY) * DODGE_SPEED;
 			} else if(keyZ && attackCooldown == 0) {
 				attacking = true;				
-				attackTimer = Time.getTime();		
+				attackTimer = Time.getTime();	
+				//Create hitboxes for attacking 
 				if(lastM == 0) {
 					attackHitbox = new Rectangle(getX(), getY()+60, getWidth(), 50); 
 					currentAnimation = 8;
@@ -211,7 +217,6 @@ class Player extends Fighters implements GameConstants {
 					currentAnimation = 7;
 				}
 			}
-
 		}
 		
 		// normalizes the vectors to not have increased speed diagonally
@@ -224,7 +229,7 @@ class Player extends Fighters implements GameConstants {
 		setX(getX() +moveDistX);
 		setY(getY() +moveDistY);
 		
-		//Borders 
+		//Create borders 
 		if(!((getX() + moveDistX)+getWidth()+13 < GAME_W)) {
 			setX(GAME_W-getWidth()-13);
 		}
@@ -254,15 +259,21 @@ class Player extends Fighters implements GameConstants {
 
 	}
 	
+	//Create combo method 
 	public void comboAdd() {
 		if(combo < MAX_COMBO) {
 			combo += 1;
 		}		
 	}
+	
+	//Create combo reset method
 	public void comboReset() {
 		combo = 0;
 	}
+	
+	//Create touched boss method
 	public void touchedBoss() {
+		//Call hurt method when touched boss
 		hurt(1, lastM+1, 100);
 	}
 	
