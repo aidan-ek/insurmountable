@@ -1,6 +1,13 @@
-//class for the the game area - this is where all the drawing of the screen occurs
 package insurmountable;
 
+/**
+ * [GamePanelOOP.java]
+ * class for the game area
+ * @author Mohammad/Aiden
+ * Date June 08, 2022
+ */
+
+//Import Required
 import java.awt.Graphics;
 import java.io.File;
 import java.awt.Color;

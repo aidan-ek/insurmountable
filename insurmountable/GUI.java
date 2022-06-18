@@ -1,12 +1,20 @@
 package insurmountable;
 
+
+/**
+ * [GUI.java]
+ * Manage all graphics user interface such as dodge cooldown, health bar, etc.
+ * @author Mohammad/Aiden
+ * Date June 15, 2022
+ */
+
+//Import required
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Font;
 
 
 public class GUI implements GameConstants {

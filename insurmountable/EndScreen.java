@@ -1,5 +1,13 @@
 package insurmountable;
 
+/**
+ * [EndScreen.java]
+ * Class for lose and win screens
+ * @author Mohammad/Aiden
+ * Date June 15, 2022
+ */
+
+
 //Import required
 import java.awt.image.BufferedImage;
 import java.io.File;

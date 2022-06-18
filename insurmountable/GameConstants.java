@@ -1,5 +1,12 @@
 package insurmountable;
 
+/**
+ * [GameConstants.java]
+ * Interface to hold all game constants
+ * @author Mohammad/Aiden
+ * Date June 08, 2022
+ */
+
 interface GameConstants {
     //width and height of the start window
     //width and height of the game window

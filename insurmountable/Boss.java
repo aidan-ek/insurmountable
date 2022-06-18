@@ -1,5 +1,14 @@
 package insurmountable;
 
+
+/**
+ * [Boss.java]
+ * Create user's enemy and its abilities 
+ * @author Mohammad/Aiden
+ * Date June 14, 2022
+ */
+
+//Import Required
 import java.awt.image.BufferedImage;
 import java.util.concurrent.ThreadLocalRandom;
 import javax.imageio.ImageIO;

@@ -1,5 +1,14 @@
 package insurmountable;
 
+/**
+ * [Player.java]
+ * Create user's player
+ * @author Mohammad/Aiden
+ * Date June 08, 2022
+ */
+
+
+//Import required
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 import java.io.File;

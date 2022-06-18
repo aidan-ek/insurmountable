@@ -1,6 +1,14 @@
-//class for the mouse listener - detects mouse movement & clicks and runs the corresponding methods 
 package insurmountable;
 
+
+/**
+ * [GameMouseListener.java]
+ * class for the mouse listener
+ * @author Mohammad/Aiden
+ * Date June 08, 2022
+ */
+
+//Import Required
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
 

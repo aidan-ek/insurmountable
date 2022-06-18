@@ -1,5 +1,12 @@
 package insurmountable;
 
+/**
+ * [StartScreen.java]
+ * Class for menu and moves
+ * @author Mohammad/Aiden
+ * Date June 13, 2022
+ */
+
 //Import required
 import java.awt.image.BufferedImage;
 import java.io.File;

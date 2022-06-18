@@ -1,5 +1,10 @@
 package insurmountable;
-
+/**
+ * [Time.java]
+ * Class to manage time
+ * @author Mohammad/Aiden
+ * Date June 14, 2022
+ */
 public class Time {
 	//Declare variables
 	private static long currentTime;

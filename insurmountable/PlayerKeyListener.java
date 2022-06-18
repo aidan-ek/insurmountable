@@ -1,6 +1,15 @@
-// class for the keyboard listener - detects key actions and runs the corresponding code
 package insurmountable;
 
+
+/**
+ * [PlayerKeyListener.java]
+ * class for the keyboard listener 
+ * @author Mohammad/Aiden
+ * Date June 08, 2022
+ */
+
+
+//Import Required
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 

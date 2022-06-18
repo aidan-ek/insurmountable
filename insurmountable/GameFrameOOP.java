@@ -1,6 +1,15 @@
 //this template can be used as reference or a starting point
 package insurmountable;
 
+
+/**
+ * [GameFrameOOP.java]
+ * Necessary JFrame class
+ * @author Mohammad/Aiden
+ * Date June 08, 2022
+ */
+
+//Import Required
 import javax.swing.JFrame;
 //import javax.swing.JPanel;
 //import java.awt.Toolkit;

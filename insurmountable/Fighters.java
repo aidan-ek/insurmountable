@@ -1,5 +1,14 @@
 package insurmountable;
 
+
+/**
+ * [Fighters.java]
+ * Abstract class for fighters blueprint
+ * @author Mohammad/Aiden
+ * Date June 09, 2022
+ */
+
+//Import required
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
