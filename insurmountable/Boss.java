@@ -20,12 +20,12 @@ public class Boss extends Fighters implements GameConstants {
 	
     Rectangle indicatorHitbox;
     
-
     private BufferedImage attackImage = null;
     private int attackImageX = 0, attackImageY = 0;
     private BufferedImage cleave;
     private BufferedImage comboSmall;
     private BufferedImage comboLarge;
+    private Player player;
     
     // adjust when adding new animation sets
     private final int TOTAL_ANIMATIONS = 3;
@@ -66,13 +66,13 @@ public class Boss extends Fighters implements GameConstants {
 		setX(newX - (getWidth() / 2));
 		hitbox = new Rectangle(getX(), getY(), this.frames[0].get(1).getWidth(), this.frames[0].get(1).getHeight());
 		attackHitbox = new Rectangle();
-    indicatorHitbox = new Rectangle();
+		indicatorHitbox = new Rectangle();
 		setHealth(BOSS_MAXHP);
 		cleave = loadAttack("cleave");
 		comboSmall = loadAttack("comboSmall");
 		comboLarge = loadAttack("comboLarge");
-		x = newX - (width / 2);
-		y = newY;
+		setX(newX - (getWidth() / 2));
+		setY(newY);
 		
 		
 	}
@@ -127,7 +127,7 @@ public class Boss extends Fighters implements GameConstants {
  	 	g.drawImage(attackImage, attackImageX, attackImageY, null);	
  	 	
  		// boss and boss hitbox
- 	 	g.drawImage(this.frames[currentAnimation].get(currentFrame), this.x, this.y, null);
+ 	 	g.drawImage(this.frames[currentAnimation].get(currentFrame), getX(), getY(), null);
  		g.drawRect(getX(), getY(), this.frames[0].get(1).getWidth(), this.frames[0].get(1).getHeight());
 
  	}
@@ -169,7 +169,7 @@ public class Boss extends Fighters implements GameConstants {
  			animationStartTime = Time.getTime();
 
  			attackHitbox = new Rectangle();
- 			indicatorHitbox = new Rectangle(getX() + width/2 - CLEAVE_W/2, getY(), CLEAVE_W, CLEAVE_H);
+ 			indicatorHitbox = new Rectangle(getX() + getWidth()/2 - CLEAVE_W/2, getY(), CLEAVE_W, CLEAVE_H);
  		} else { //indicator
  			// resets attack hitbox so it doesnt linger after hitting
  			attackHitbox = new Rectangle();
