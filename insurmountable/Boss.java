@@ -11,24 +11,15 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
-public class Boss implements GameConstants {
-	private int width, height, x, y;
-	private int health = BOSS_MAXHP;
+public class Boss extends Fighters implements GameConstants {
+
 	
 	// timer for antimations
 	private long animationStartTime = 0;
 	
-	// boss hitbox
-    Rectangle hitbox;    
-    Rectangle attackHitbox;
-    
-    // boss animations arrays
-    private int currentAnimation = 0;
-    private int currentFrame = 0;
-    private ArrayList<BufferedImage>[] frames;
     
     // adjust when adding new animation sets
-    private final int TOTAL_ANIMATIONS = 2;
+    
     
     // boss attack constants
     private long IDLE_DELAY = 100;
@@ -41,15 +32,17 @@ public class Boss implements GameConstants {
 	
 	// parameter constructor
     public Boss(int newX, int newY, String fileName) {
-    	
+    	super(newX, newY);
     	// CURRENTLY MISSING BOSS SPRITES FOR PLACEHOLDER
+    	TOTAL_ANIMATIONS = 2;
 		loadSprites(fileName);
-		width = this.frames[0].get(1).getWidth();
-		height = this.frames[0].get(1).getHeight();
-		x = newX - (width / 2);
-		y = newY;
-		hitbox = new Rectangle(this.x, this.y, this.frames[0].get(1).getWidth(), this.frames[0].get(1).getHeight());
+		setWidth(this.frames[0].get(1).getWidth());
+		setHeight(this.frames[0].get(1).getHeight());
+		setX(newX - (getWidth() / 2));
+		hitbox = new Rectangle(getX(), getY(), this.frames[0].get(1).getWidth(), this.frames[0].get(1).getHeight());
 		attackHitbox = new Rectangle();
+		setHealth(BOSS_MAXHP);
+		
 	}
     
     
@@ -84,11 +77,11 @@ public class Boss implements GameConstants {
  		
  		Graphics2D g2d = (Graphics2D) g;
  		// draws boss
- 		g.drawImage(this.frames[currentAnimation].get(currentFrame), this.x, this.y, null);
+ 		g.drawImage(this.frames[currentAnimation].get(currentFrame), getX(), getY(), null);
  		
  		// boss hitbox
  		g.setColor(Color.red);
- 		g.drawRect(this.x, this.y, this.frames[0].get(1).getWidth(), this.frames[0].get(1).getHeight());
+ 		g.drawRect(getX(), getY(), this.frames[0].get(1).getWidth(), this.frames[0].get(1).getHeight());
  		g2d.draw(attackHitbox);
  	
 
@@ -126,7 +119,7 @@ public class Boss implements GameConstants {
  		if (animationStartTime == 0) {
  			animationStartTime = Time.getTime();
  			currentFrame = 1;
- 			attackHitbox = new Rectangle(this.x, this.y, 0, 0);
+ 			attackHitbox = new Rectangle(getX(), getY(), 0, 0);
  		} else {
  			if (currentFrame == 0 && Time.since(animationStartTime) >= (CLEAVE_WINDUP + ThreadLocalRandom.current().nextInt(-400, 401))) {
  				animationStartTime = Time.getTime();
@@ -135,7 +128,7 @@ public class Boss implements GameConstants {
  			if (currentFrame == 1 && Time.since(animationStartTime) >= CLEAVE_INDICATETIME) {
  				animationStartTime = Time.getTime();
  				currentFrame++;
- 				attackHitbox = new Rectangle(this.x + width/2 - CLEAVE_W/2, this.y, CLEAVE_W, CLEAVE_H);
+ 				attackHitbox = new Rectangle(getX() + getWidth()/2 - CLEAVE_W/2, getY(), CLEAVE_W, CLEAVE_H);
  			}
  			if (currentFrame == 2 && Time.since(animationStartTime) >= CLEAVE_AFTERHIT) {
  				animationStartTime = Time.getTime();
@@ -155,28 +148,10 @@ public class Boss implements GameConstants {
  	}
  	
  	public void hurt(int damage) {
- 		health -= damage;
+ 		setHealth(getHealth() - damage);
  	}
     
-    // getters and setters
-    public int getHealth() {
-    	return health;
-    }
-    public void setHealth(int newHealth) {
-    	health = newHealth;
-    }
-    public int getX() {
-    	return x;
-    }
-    public void setX(int newX) {
-    	x = newX;
-    }
-    public int getY() {
-    	return y;
-    }
-    public void setY(int newY) {
-    	y = newY;
-    }
+
     public int getAnimation() {
     	return currentAnimation;
     }
