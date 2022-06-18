@@ -11,23 +11,16 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
-public class Boss implements GameConstants {
-	private int width, height, x, y;
-	private int health = BOSS_MAXHP;
-	private Player player;
+
+public class Boss extends Fighters implements GameConstants {
+
 	
 	// timer for antimations
 	private long animationStartTime = 0;
 	
-	// boss hitbox
-    Rectangle hitbox;    
-    Rectangle attackHitbox;
     Rectangle indicatorHitbox;
     
-    // boss animations arrays
-    private int currentAnimation = 0;
-    private int currentFrame = 0;
-    private ArrayList<BufferedImage>[] frames;
+
     private BufferedImage attackImage = null;
     private int attackImageX = 0, attackImageY = 0;
     private BufferedImage cleave;
@@ -65,19 +58,22 @@ public class Boss implements GameConstants {
 	
 	// parameter constructor
     public Boss(int newX, int newY, String fileName) {
-    	
-    	// CURRENTLY MISSING BOSS SPRITES FOR PLACEHOLDER
+    	super(newX, newY);
 		loadSprites(fileName);
+
+		setWidth(this.frames[0].get(1).getWidth());
+		setHeight(this.frames[0].get(1).getHeight());
+		setX(newX - (getWidth() / 2));
+		hitbox = new Rectangle(getX(), getY(), this.frames[0].get(1).getWidth(), this.frames[0].get(1).getHeight());
+		attackHitbox = new Rectangle();
+    indicatorHitbox = new Rectangle();
+		setHealth(BOSS_MAXHP);
 		cleave = loadAttack("cleave");
 		comboSmall = loadAttack("comboSmall");
 		comboLarge = loadAttack("comboLarge");
-		width = this.frames[0].get(1).getWidth();
-		height = this.frames[0].get(1).getHeight();
 		x = newX - (width / 2);
 		y = newY;
-		hitbox = new Rectangle(this.x, this.y, this.frames[0].get(1).getWidth(), this.frames[0].get(1).getHeight());
-		attackHitbox = new Rectangle();
-		indicatorHitbox = new Rectangle();
+		
 		
 	}
     
@@ -126,12 +122,13 @@ public class Boss implements GameConstants {
  		
  		// draws boss attack and hitbox
  		g.setColor(Color.red);
+
  	 	g2d.fill(indicatorHitbox);
  	 	g.drawImage(attackImage, attackImageX, attackImageY, null);	
  	 	
  		// boss and boss hitbox
  	 	g.drawImage(this.frames[currentAnimation].get(currentFrame), this.x, this.y, null);
- 		g.drawRect(this.x, this.y, this.frames[0].get(1).getWidth(), this.frames[0].get(1).getHeight());
+ 		g.drawRect(getX(), getY(), this.frames[0].get(1).getWidth(), this.frames[0].get(1).getHeight());
 
  	}
  	
@@ -170,11 +167,13 @@ public class Boss implements GameConstants {
  	public void cleaveAttack() {
  		if (animationStartTime == 0) { // windup
  			animationStartTime = Time.getTime();
+
  			attackHitbox = new Rectangle();
- 			indicatorHitbox = new Rectangle(this.x + width/2 - CLEAVE_W/2, this.y, CLEAVE_W, CLEAVE_H);
+ 			indicatorHitbox = new Rectangle(getX() + width/2 - CLEAVE_W/2, getY(), CLEAVE_W, CLEAVE_H);
  		} else { //indicator
  			// resets attack hitbox so it doesnt linger after hitting
  			attackHitbox = new Rectangle();
+      
  			if (currentFrame == 0 && Time.since(animationStartTime) >= (CLEAVE_WINDUP + ThreadLocalRandom.current().nextInt(-400, 401))) {
  				animationStartTime = Time.getTime();
  				currentFrame++;
@@ -187,6 +186,7 @@ public class Boss implements GameConstants {
  				indicatorHitbox = new Rectangle();
  				setAttackImage(cleave, attackHitbox.x, attackHitbox.y);
  			} // after hit frames
+      
  			if (currentFrame == 2 && Time.since(animationStartTime) >= CLEAVE_AFTERHIT) {
  				animationStartTime = Time.getTime();
  				currentFrame = 0;
@@ -277,7 +277,7 @@ public class Boss implements GameConstants {
  	}
  	
  	public void hurt(int damage) {
- 		health -= damage;
+ 		setHealth(getHealth() - damage);
  	}
  	
  	public void setAttackImage(BufferedImage image, int x, int y) {
@@ -286,25 +286,7 @@ public class Boss implements GameConstants {
  		attackImageY = y;
  	}
     
-    // getters and setters
-    public int getHealth() {
-    	return health;
-    }
-    public void setHealth(int newHealth) {
-    	health = newHealth;
-    }
-    public int getX() {
-    	return x;
-    }
-    public void setX(int newX) {
-    	x = newX;
-    }
-    public int getY() {
-    	return y;
-    }
-    public void setY(int newY) {
-    	y = newY;
-    }
+
     public int getAnimation() {
     	return currentAnimation;
     }
